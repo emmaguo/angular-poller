@@ -146,7 +146,7 @@
                 /*
                  * Return a singleton instance of a poller.
                  * If poller does not exist, then register and start it.
-                 * If poller exist, then return it and restart it if neccessary.
+                 * Otherwise return it and restart it if neccessary.
                  */
                 get: function (resource, options) {
 
