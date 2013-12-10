@@ -176,6 +176,11 @@
                     return poller;
                 },
 
+                // Total number of pollers in poller registry
+                size: function () {
+                    return pollers.length;
+                },
+
                 // Stop all poller services
                 stopAll: function () {
                     angular.forEach(pollers, function (p) {
