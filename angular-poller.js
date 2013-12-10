@@ -186,6 +186,12 @@
                     angular.forEach(pollers, function (p) {
                         p.stop();
                     });
+                },
+
+                // Stop and remove all poller services
+                reset: function () {
+                    this.stopAll();
+                    pollers = [];
                 }
             };
         }
