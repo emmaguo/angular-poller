@@ -1,0 +1,17 @@
+{
+    "name": "angularpoller",
+    "version": "0.0.1",
+    "dependencies": {},
+    "devDependencies": {
+        "karma": "~0.10.8",
+        "karma-mocha": "~0.1.1",
+        "karma-chai": "~0.0.2"
+    },
+    "engines": {
+        "node": ">=0.8.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/emmaguo/angular-poller.git"
+    }
+}
