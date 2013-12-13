@@ -1,6 +1,9 @@
 # Angular Poller
 Need a poller service in your [AngularJS](http://angularjs.org/) application?
 
+## Install
+Download [angular-poller.min.js](https://raw.github.com/emmaguo/angular-poller/master/angular-poller.min.js)
+
 ## Basic Usage
 ```javascript
 // Inject angular poller service.
