@@ -6,16 +6,6 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        uglify: {
-            options: {
-                banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
-            },
-            dist: {
-                files: {
-                    '<%= pkg.name %>.min.js': ['angular-poller.js']
-                }
-            }
-        },
         jshint: {
             options: {
                 jshintrc: '.jshintrc',
@@ -28,9 +18,29 @@ module.exports = function (grunt) {
                 configFile: 'karma.conf.js',
                 singleRun: true
             }
+        },
+        ngmin: {
+            factory: {
+                files: [
+                    {
+                        src: 'angular-poller.js',
+                        dest: 'angular-poller.min.js'
+                    }
+                ]
+            }
+        },
+        uglify: {
+            options: {
+                banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+            },
+            dist: {
+                files: {
+                    '<%= pkg.name %>.min.js': ['angular-poller.min.js']
+                }
+            }
         }
     });
 
     grunt.registerTask('test', ['jshint', 'karma']);
-    grunt.registerTask('default', ['test', 'uglify']);
+    grunt.registerTask('default', ['test', 'ngmin', 'uglify']);
 };
