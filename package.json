@@ -10,7 +10,8 @@
         "grunt-contrib-jshint": "~0.7.2",
         "grunt-contrib-uglify": "~0.2.7",
         "load-grunt-tasks": "~0.2.0",
-        "jshint-stylish": "~0.1.4"
+        "jshint-stylish": "~0.1.4",
+        "grunt-karma": "~0.6.2"
     },
     "engines": {
         "node": ">=0.8.0"

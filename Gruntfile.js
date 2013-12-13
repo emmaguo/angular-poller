@@ -22,9 +22,15 @@ module.exports = function (grunt) {
                 reporter: require('jshint-stylish')
             },
             target: ['Gruntfile.js', 'angular-poller.js', 'test/*.js']
+        },
+        karma: {
+            unit: {
+                configFile: 'karma.conf.js',
+                singleRun: true
+            }
         }
     });
 
-    grunt.registerTask('test', ['jshint']);
-    grunt.registerTask('default', ['jshint', 'uglify']);
+    grunt.registerTask('test', ['jshint', 'karma']);
+    grunt.registerTask('default', ['test', 'uglify']);
 };
