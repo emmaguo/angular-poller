@@ -1,5 +1,5 @@
 {
-    "name": "angular-poller",
+    "name": "angularpoller",
     "main": "angular-poller.js",
     "version": "0.0.1",
     "dependencies": {
