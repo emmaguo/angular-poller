@@ -9,10 +9,10 @@ Download [angular-poller.min.js](https://raw.github.com/emmaguo/angular-poller/m
 // Inject angular poller service.
 var myModule = angular.module('myApp', ['poller']);
 
-myModule.controller('myController', function($scope, poller) {
+myModule.controller('myController', function($scope, $resource, poller) {
 
     // Define your resource object.
-    var myResource = $resource(...);
+    var myResource = $resource(url[, paramDefaults]);
 
     // Get poller. This also starts/restarts poller.
     var myPoller = poller.get(myResource);
@@ -33,12 +33,21 @@ myModule.controller('myController', function($scope, poller) {
 // Inject angular poller service.
 var myModule = angular.module('myApp', ['poller']);
 
-myModule.controller('myController', function($scope, poller) {
+myModule.controller('myController', function($scope, $resource, poller) {
 
-    // var myResource = $resource(...);
+    // Define your resource object.
+    var myResource = $resource(url[, paramDefaults], {
+        myQuery: {
+            method: 'GET',
+            isArray: true,
+            headers: ...
+        },
+        ...
+    });
 
+    // Get poller.
     var myPoller = poller.get(myResource, {
-        action: 'get',
+        action: 'myQuery',
         delay: 6000,
         params: {
             verb: 'greet',

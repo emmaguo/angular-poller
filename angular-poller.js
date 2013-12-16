@@ -37,7 +37,7 @@
 
                 /*
                  * Default settings:
-                 * - Resource action can be either query (by default) or get.
+                 * - Resource action can be anything. By default it is query.
                  * - Default delay is 5000 ms.
                  * - Default values for url parameters.
                  *
@@ -112,21 +112,9 @@
                         self = this;
 
                     (function tick() {
-                        if (action.toLowerCase() === 'query') {
-                            resource.query(
-                                params,
-                                function (data) {
-                                    deferred.notify(data);
-                                }
-                            );
-                        } else if (action.toLowerCase() === 'get') {
-                            resource.get(
-                                params,
-                                function (data) {
-                                    deferred.notify(data);
-                                }
-                            );
-                        }
+                        resource[action](params, function (data) {
+                            deferred.notify(data);
+                        });
 
                         self.timeout = $timeout(tick, delay);
                     })();
