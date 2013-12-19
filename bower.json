@@ -10,12 +10,14 @@
     },
     "ignore": [
         "test",
+        ".gitignore",
         ".bowerrc",
         ".jshintrc",
         "bower.json",
         "package.json",
         "Gruntfile.js",
-        "karma.conf.js"
+        "karma.conf.js",
+        "LICENSE.md"
     ],
     "dependencies": {
         "angular": "~1.2.4",
