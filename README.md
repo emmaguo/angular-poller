@@ -4,9 +4,7 @@ Lightweight [AngularJS](http://angularjs.org/) poller service which can be easil
 If you need the data to be exact real-time such as in a chat box, you should use long polling or WebSocket instead.
 
 ## Install
-Download [angular-poller.min.js](https://raw.github.com/emmaguo/angular-poller/master/angular-poller.min.js).
-
-Or run: `bower install angular-poller`.
+Download [angular-poller.min.js](https://raw.github.com/emmaguo/angular-poller/master/angular-poller.min.js) or simply run: `bower install angular-poller`.
 
 ## Basic Usage
 ```javascript
