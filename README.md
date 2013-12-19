@@ -1,4 +1,6 @@
 # Angular Poller
+[![devDependency Status](https://david-dm.org/emmaguo/angular-poller.png)](https://david-dm.org/emmaguo/angular-poller#info=devDependencies)
+
 Lightweight [AngularJS](http://angularjs.org/) poller service which can be easily injected into controllers. It uses a timer and sends requests every few seconds to keep the client synced with the server.
 
 If you need the data to be exact real-time such as in a chat box, you should use long polling or WebSocket instead.
