@@ -9,7 +9,7 @@
         "email": "emmahongguo@gmail.com"
     },
     "ignore": [
-        "test/*.js",
+        "test",
         ".bowerrc",
         ".jshintrc",
         "bower.json",
