@@ -1,5 +1,6 @@
 # Angular Poller
 [![devDependency Status](https://david-dm.org/emmaguo/angular-poller.png)](https://david-dm.org/emmaguo/angular-poller#info=devDependencies)
+[![Build Status](https://travis-ci.org/emmaguo/angular-poller.png)](https://travis-ci.org/emmaguo/angular-poller)
 
 Lightweight [AngularJS](http://angularjs.org/) poller service which can be easily injected into controllers. It uses a timer and sends requests every few seconds to keep the client synced with the server.
 
