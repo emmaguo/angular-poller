@@ -20,5 +20,8 @@
     "repository": {
         "type": "git",
         "url": "http://github.com/emmaguo/angular-poller.git"
+    },
+    "scripts": {
+        "test": "grunt"
     }
 }
