@@ -1,8 +1,8 @@
 'use strict';
 
-describe('Poller service', function () {
+describe('Poller Service:', function () {
 
-    describe('Poller get', function () {
+    describe('get:', function () {
 
         var $resource, $timeout, $httpBackend, poller, myResource, myPoller, anotherPoller;
 
@@ -18,7 +18,7 @@ describe('Poller service', function () {
             poller = $injector.get('poller');
         }));
 
-        describe('Poller is not yet registered', function () {
+        describe('if poller is not registered yet,', function () {
 
             beforeEach(function () {
                 myResource = $resource('/test');
@@ -30,20 +30,20 @@ describe('Poller service', function () {
                 poller.reset();
             });
 
-            it('Should create new poller on invoking get() if it is not registered yet', function () {
+            it('should create new poller on invoking get().', function () {
                 expect(myPoller).to.not.equal(null);
             });
 
-            it('Should increase poller registry size by one on registering a new poller', function () {
+            it('should increase poller registry size by one.', function () {
                 expect(poller.size()).to.equal(1);
             });
 
-            it('Should start poller on getting new poller', function () {
+            it('should start poller.', function () {
                 expect(myPoller.timeout.$$timeoutId).not.to.equal(null);
             });
         });
 
-        describe('Poller is already registered', function () {
+        describe('if poller is already registered,', function () {
 
             beforeEach(function () {
                 myResource = $resource('/test');
@@ -61,49 +61,49 @@ describe('Poller service', function () {
                 poller.reset();
             });
 
-            it('Should not create a new poller on invoking get() if it is already registered', function () {
+            it('should not create a new poller on invoking get().', function () {
                 anotherPoller = poller.get(myResource);
                 expect(anotherPoller).to.equal(myPoller);
             });
 
-            it('Should overwrite poller.action if it is re-defined', function () {
+            it('should overwrite poller.action if it is re-defined.', function () {
                 anotherPoller = poller.get(myResource, {action: 'query'});
                 expect(anotherPoller.action).to.equal('query');
             });
 
-            it('Should not modify action property if it is not re-defined', function () {
+            it('should not modify action property if it is not re-defined.', function () {
                 anotherPoller = poller.get(myResource);
                 expect(anotherPoller.action).to.equal('get');
             });
 
-            it('Should overwrite poller.delay if it is re-defined', function () {
+            it('should overwrite poller.delay if it is re-defined.', function () {
                 anotherPoller = poller.get(myResource, {delay: 1000});
                 expect(anotherPoller.delay).to.equal(1000);
             });
 
-            it('Should not modify delay property if it is not re-defined', function () {
+            it('should not modify delay property if it is not re-defined.', function () {
                 anotherPoller = poller.get(myResource);
                 expect(anotherPoller.delay).to.equal(8000);
             });
 
-            it('Should overwrite poller.params if it is re-defined', function () {
+            it('should overwrite poller.params if it is re-defined.', function () {
                 anotherPoller = poller.get(myResource, {params: {say: 'Bye!'}});
                 expect(anotherPoller.params.say).to.equal('Bye!');
             });
 
-            it('Should not modify params property if it is not re-defined', function () {
+            it('should not modify params property if it is not re-defined.', function () {
                 anotherPoller = poller.get(myResource);
                 expect(anotherPoller.params.say).to.equal('Hi!');
             });
 
-            it('Should start polling if it is currently stopped', function () {
+            it('should start polling if it is currently stopped.', function () {
                 myPoller.stop();
                 expect(myPoller.timeout.$$timeoutId).to.equal(null);
                 anotherPoller = poller.get(myResource);
                 expect(myPoller.timeout.$$timeoutId).to.not.equal(null);
             });
 
-            it('Should restart polling if it is currently running', function () {
+            it('should restart polling if it is currently running.', function () {
                 var timeoutId = myPoller.timeout.$$timeoutId;
                 anotherPoller = poller.get(myResource);
                 expect(anotherPoller.timeout.$$timeoutId).to.not.equal(timeoutId);

@@ -1,8 +1,8 @@
 'use strict';
 
-describe('Poller service', function () {
+describe('Poller Service:', function () {
 
-    describe('Poller model', function () {
+    describe('model:', function () {
 
         var $resource, $timeout, $httpBackend, poller, resource1, resource2, poller1, poller2, result1, result2;
 
@@ -54,48 +54,48 @@ describe('Poller service', function () {
             poller.reset();
         });
 
-        it('Should have resource property', function () {
+        it('should have resource property.', function () {
             expect(poller1).to.have.property('resource').to.equal(resource1);
         });
 
-        it('Should have default action property - query', function () {
+        it('should have default action property - query.', function () {
             expect(poller1).to.have.property('action').to.equal('query');
         });
 
-        it('Should have customized action if it is specified', function () {
+        it('should have customized action if it is specified.', function () {
             expect(poller2).to.have.property('action').to.equal('get');
         });
 
-        it('Should have default delay property - 5000', function () {
+        it('should have default delay property - 5000.', function () {
             expect(poller1).to.have.property('delay').to.equal(5000);
         });
 
-        it('Should have customized delay if it is specified', function () {
+        it('should have customized delay if it is specified.', function () {
             expect(poller2).to.have.property('delay').to.equal(6000);
         });
 
-        it('Should have default params property - empty object', function () {
+        it('should have default params property - empty object.', function () {
             expect(poller1).to.have.property('params').to.deep.equal({});
         });
 
-        it('Should have customized params if it is specified', function () {
+        it('should have customized params if it is specified.', function () {
             expect(poller2).to.have.property('params').to.have.property('id').to.equal(123);
         });
 
-        it('Should maintain a copy of resource promise', function () {
+        it('should maintain a copy of resource promise.', function () {
             expect(poller1).to.have.property('promise');
         });
 
-        it('Should maintain a timeout ID to manage polling', function () {
+        it('should maintain a timeout ID to manage polling.', function () {
             expect(poller1).to.have.property('timeout').to.have.property('$$timeoutId');
         });
 
-        it('Should stop polling and reset timeout ID on invoking stop()', function () {
+        it('should stop polling and reset timeout ID on invoking stop().', function () {
             poller1.stop();
             expect(poller1.timeout.$$timeoutId).to.equal(null);
         });
 
-        it('Should have correct data in callback', function () {
+        it('should have correct data in callback.', function () {
             expect(result1.length).to.equal(2);
             expect(result1[1].name).to.equal('Bob');
 
@@ -103,7 +103,7 @@ describe('Poller service', function () {
             expect(result2.name).to.equal('Alice');
         });
 
-        it('Should fetch resource every (delay) milliseconds', function () {
+        it('should fetch resource every (delay) milliseconds.', function () {
             $httpBackend.resetExpectations();
             $httpBackend.expect('GET', '/users').respond([
                 {id: 123, name: 'Alice'},

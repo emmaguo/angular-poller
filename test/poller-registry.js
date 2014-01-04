@@ -1,8 +1,8 @@
 'use strict';
 
-describe('Poller service', function () {
+describe('Poller Service:', function () {
 
-    describe('Poller registry', function () {
+    describe('registry:', function () {
 
         var $resource, $timeout, $httpBackend, poller, resource1, resource2, poller1, poller2;
 
@@ -39,17 +39,17 @@ describe('Poller service', function () {
             poller.reset();
         });
 
-        it('Should return correct number of pollers on invoking size()', function () {
+        it('should return correct number of pollers on invoking size().', function () {
             expect(poller.size()).to.equal(2);
         });
 
-        it('Should stop all poller services on invoking stopAll()', function () {
+        it('should stop all poller services on invoking stopAll().', function () {
             poller.stopAll();
             expect(poller1.timeout.$$timeoutId).to.equal(null);
             expect(poller2.timeout.$$timeoutId).to.equal(null);
         });
 
-        it('Should stop and remove all poller services on invoking reset()', function () {
+        it('should stop and remove all poller services on invoking reset().', function () {
             poller.reset();
             expect(poller1.timeout.$$timeoutId).to.equal(null);
             expect(poller2.timeout.$$timeoutId).to.equal(null);
