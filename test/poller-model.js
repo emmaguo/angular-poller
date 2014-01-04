@@ -9,16 +9,13 @@ describe('Poller Service:', function () {
         beforeEach(function () {
             module('poller');
             module('ngResource');
-        });
 
-        beforeEach(inject(function ($injector) {
-            $resource = $injector.get('$resource');
-            $timeout = $injector.get('$timeout');
-            $httpBackend = $injector.get('$httpBackend');
-            poller = $injector.get('poller');
-        }));
-
-        beforeEach(function () {
+            inject(function ($injector) {
+                $resource = $injector.get('$resource');
+                $timeout = $injector.get('$timeout');
+                $httpBackend = $injector.get('$httpBackend');
+                poller = $injector.get('poller');
+            });
 
             // Basic poller
             resource1 = $resource('/users');

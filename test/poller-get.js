@@ -4,26 +4,23 @@ describe('Poller Service:', function () {
 
     describe('get:', function () {
 
-        var $resource, $timeout, $httpBackend, poller, myResource, myPoller, anotherPoller;
+        var $resource, poller, myResource, myPoller, anotherPoller;
 
         beforeEach(function () {
+
             module('poller');
             module('ngResource');
-        });
 
-        beforeEach(inject(function ($injector) {
-            $resource = $injector.get('$resource');
-            $timeout = $injector.get('$timeout');
-            $httpBackend = $injector.get('$httpBackend');
-            poller = $injector.get('poller');
-        }));
+            inject(function ($injector) {
+                $resource = $injector.get('$resource');
+                poller = $injector.get('poller');
+            });
+        });
 
         describe('if poller is not registered yet,', function () {
 
             beforeEach(function () {
-                myResource = $resource('/test');
-                $httpBackend.when('GET', '/test').respond('Test success');
-                myPoller = poller.get(myResource);
+                myPoller = poller.get($resource('/test'));
             });
 
             afterEach(function () {
@@ -47,12 +44,11 @@ describe('Poller Service:', function () {
 
             beforeEach(function () {
                 myResource = $resource('/test');
-                $httpBackend.when('GET', '/test').respond('Test success');
                 myPoller = poller.get(myResource, {
                     action: 'get',
                     delay: 8000,
                     params: {
-                        say: 'Hi!'
+                        id: '123'
                     }
                 });
             });
@@ -87,13 +83,13 @@ describe('Poller Service:', function () {
             });
 
             it('should overwrite poller.params if it is re-defined.', function () {
-                anotherPoller = poller.get(myResource, {params: {say: 'Bye!'}});
-                expect(anotherPoller.params.say).to.equal('Bye!');
+                anotherPoller = poller.get(myResource, {params: {id: '456'}});
+                expect(anotherPoller.params.id).to.equal('456');
             });
 
             it('should not modify params property if it is not re-defined.', function () {
                 anotherPoller = poller.get(myResource);
-                expect(anotherPoller.params.say).to.equal('Hi!');
+                expect(anotherPoller.params.id).to.equal('123');
             });
 
             it('should start polling if it is currently stopped.', function () {
