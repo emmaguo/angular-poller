@@ -12,7 +12,8 @@
         "load-grunt-tasks": "~0.2.0",
         "jshint-stylish": "~0.1.4",
         "grunt-karma": "~0.6.2",
-        "grunt-ngmin": "0.0.3"
+        "grunt-ngmin": "0.0.3",
+        "karma-coverage": "~0.1.4"
     },
     "engines": {
         "node": ">=0.8.0"
