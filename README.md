@@ -28,6 +28,9 @@ myModule.controller('myController', function($scope, $resource, poller) {
 
     // Stop all pollers.
     poller.stopAll();
+
+    // Stop and remove all pollers.
+    poller.reset();
 });
 ```
 
