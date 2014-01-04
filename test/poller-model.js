@@ -4,7 +4,7 @@ describe('Poller service', function () {
 
     describe('Poller model', function () {
 
-        var $resource, $timeout, $httpBackend, poller, resource1, resource2, poller1, poller2;
+        var $resource, $timeout, $httpBackend, poller, resource1, resource2, poller1, poller2, result1, result2;
 
         beforeEach(function () {
             module('poller');
@@ -19,20 +19,35 @@ describe('Poller service', function () {
         }));
 
         beforeEach(function () {
-            resource1 = $resource('/test1');
-            resource2 = $resource('/test2');
 
-            $httpBackend.when('GET', '/test1').respond('Test one success');
-            $httpBackend.when('GET', '/test2?say=Hi!').respond('Test two success');
-
+            // Basic poller
+            resource1 = $resource('/users');
+            $httpBackend.expect('GET', '/users').respond([
+                {id: 123, name: 'Alice'},
+                {id: 456, name: 'Bob'}
+            ]);
             poller1 = poller.get(resource1);
+            poller1.promise.then(null, null, function (data) {
+                result1 = data;
+            });
+
+            // Advanced poller
+            resource2 = $resource('/user');
+            $httpBackend.expect('GET', '/user?id=123').respond(
+                {id: 123, name: 'Alice'}
+            );
             poller2 = poller.get(resource2, {
                 action: 'get',
                 delay: 6000,
                 params: {
-                    say: 'Hi!'
+                    id: 123
                 }
             });
+            poller2.promise.then(null, null, function (data) {
+                result2 = data;
+            });
+
+            $httpBackend.flush();
         });
 
         afterEach(function () {
@@ -64,7 +79,7 @@ describe('Poller service', function () {
         });
 
         it('Should have customized params if it is specified', function () {
-            expect(poller2).to.have.property('params').to.have.property('say').to.equal('Hi!');
+            expect(poller2).to.have.property('params').to.have.property('id').to.equal(123);
         });
 
         it('Should maintain a copy of resource promise', function () {
@@ -80,10 +95,29 @@ describe('Poller service', function () {
             expect(poller1.timeout.$$timeoutId).to.equal(null);
         });
 
+        it('Should have correct data in callback', function () {
+            expect(result1.length).to.equal(2);
+            expect(result1[1].name).to.equal('Bob');
+
+            expect(result2.id).to.equal(123);
+            expect(result2.name).to.equal('Alice');
+        });
+
         it('Should fetch resource every (delay) milliseconds', function () {
-            var firstTimeId = poller1.timeout.$$timeoutId;
+            $httpBackend.resetExpectations();
+            $httpBackend.expect('GET', '/users').respond([
+                {id: 123, name: 'Alice'},
+                {id: 456, name: 'Bob'},
+                {id: 789, name: 'Lucy'}
+            ]);
+            $httpBackend.expect('GET', '/user?id=123').respond(
+                {id: 123, name: 'Alice', number: '456'}
+            );
             $timeout.flush();
-            expect(poller1.timeout.$$timeoutId).to.not.equal(firstTimeId);
+            $httpBackend.flush();
+
+            expect(result1.length).to.equal(3);
+            expect(result2).to.have.property('number');
         });
     });
 });
