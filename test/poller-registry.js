@@ -8,12 +8,11 @@ describe('Poller Service:', function () {
 
         beforeEach(function () {
 
-            module('poller');
-            module('ngResource');
+            module('poller', 'ngResource');
 
-            inject(function ($injector) {
-                $resource = $injector.get('$resource');
-                poller = $injector.get('poller');
+            inject(function (_$resource_, _poller_) {
+                $resource = _$resource_;
+                poller = _poller_;
             });
 
             poller1 = poller.get($resource('/test1'));

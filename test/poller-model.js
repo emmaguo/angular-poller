@@ -7,14 +7,14 @@ describe('Poller Service:', function () {
         var $resource, $timeout, $httpBackend, poller, resource1, resource2, poller1, poller2, result1, result2;
 
         beforeEach(function () {
-            module('poller');
-            module('ngResource');
 
-            inject(function ($injector) {
-                $resource = $injector.get('$resource');
-                $timeout = $injector.get('$timeout');
-                $httpBackend = $injector.get('$httpBackend');
-                poller = $injector.get('poller');
+            module('poller', 'ngResource');
+
+            inject(function (_$resource_, _$timeout_, _$httpBackend_, _poller_) {
+                $resource = _$resource_;
+                $timeout = _$timeout_;
+                $httpBackend = _$httpBackend_;
+                poller = _poller_;
             });
 
             // Basic poller
