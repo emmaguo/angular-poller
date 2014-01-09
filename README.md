@@ -25,16 +25,12 @@ myModule.controller('myController', function($scope, $resource, poller) {
 
     // Stop poller.
     myPoller.stop();
-
-    // Stop all pollers.
-    poller.stopAll();
-
-    // Stop and remove all pollers.
-    poller.reset();
 });
 ```
 
 ## Advanced Usage
+
+### Customization
 ```javascript
 // Inject angular poller service.
 var myModule = angular.module('myApp', ['poller']);
@@ -62,5 +58,61 @@ myModule.controller('myController', function($scope, $resource, poller) {
     });
 
     myPoller.promise.then(successCallback, errorCallback, notifyCallback);
+});
+```
+
+### Multiple Resources
+```javascript
+// Inject angular poller service.
+var myModule = angular.module('myApp', ['poller']);
+
+myModule.controller('myController', function($scope, $resource, poller) {
+
+    // Define resource objects and pollers.
+    var resource1 = $resource(...),
+        resource2 = $resource(...),
+        poller1 = poller.get(resource1),
+        poller2 = poller.get(resource2);
+
+    poller1.promise.then(successCallback, errorCallback, notifyCallback);
+    poller2.promise.then(successCallback, errorCallback, notifyCallback);
+
+    // Stop all pollers.
+    poller.stopAll();
+
+    // Stop and remove all pollers.
+    poller.reset();
+});
+```
+
+### Multiple Controllers
+```javascript
+// Inject angular poller service.
+var myModule = angular.module('myApp', ['poller']);
+
+// Create resource factory.
+myModule.factory('myResource', function ($resource) {
+    return $resource(...);
+});
+
+myModule.controller('controller1', function($scope, poller, myResource) {
+
+    // Register and start poller.
+    var myPoller = poller.get(myResource);
+
+    myPoller.promise.then(successCallback, errorCallback, notifyCallback);
+});
+
+myModule.controller('controller2', function($scope, poller, myResource) {
+
+    // Get existing poller and restart it.
+    var myPoller = poller.get(myResource);
+
+    myPoller.promise.then(successCallback, errorCallback, notifyCallback);
+});
+
+myModule.controller('controller3', function($scope, poller, myResource) {
+
+    poller.get(myResource).stop();
 });
 ```
