@@ -96,23 +96,18 @@ myModule.factory('myResource', function ($resource) {
 });
 
 myModule.controller('controller1', function($scope, poller, myResource) {
-
     // Register and start poller.
     var myPoller = poller.get(myResource);
-
     myPoller.promise.then(successCallback, errorCallback, notifyCallback);
 });
 
 myModule.controller('controller2', function($scope, poller, myResource) {
-
     // Get existing poller and restart it.
     var myPoller = poller.get(myResource);
-
     myPoller.promise.then(successCallback, errorCallback, notifyCallback);
 });
 
 myModule.controller('controller3', function($scope, poller, myResource) {
-
     poller.get(myResource).stop();
 });
 ```
