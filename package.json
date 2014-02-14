@@ -13,7 +13,8 @@
         "jshint-stylish": "~0.1.5",
         "grunt-karma": "~0.6.2",
         "grunt-ngmin": "0.0.3",
-        "karma-coverage": "~0.1.5"
+        "karma-coverage": "~0.1.5",
+        "grunt-karma-coveralls": "~2.3.0"
     },
     "engines": {
         "node": ">=0.8.0"

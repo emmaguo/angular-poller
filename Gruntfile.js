@@ -19,6 +19,12 @@ module.exports = function (grunt) {
                 singleRun: true
             }
         },
+        coveralls: {
+            options: {
+                debug: true,
+                coverage_dir: 'coverage'
+            }
+        },
         ngmin: {
             factory: {
                 files: [
@@ -42,5 +48,5 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('test', ['jshint', 'karma']);
-    grunt.registerTask('default', ['test', 'ngmin', 'uglify']);
+    grunt.registerTask('default', ['test', 'coveralls', 'ngmin', 'uglify']);
 };
