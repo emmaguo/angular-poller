@@ -3,17 +3,17 @@
     "version": "0.1.1",
     "dependencies": {},
     "devDependencies": {
-        "karma": "~0.10.8",
+        "karma": "~0.10.9",
         "karma-mocha": "~0.1.1",
-        "karma-chai": "~0.0.2",
+        "karma-chai": "~0.1.0",
         "grunt": "~0.4.2",
-        "grunt-contrib-jshint": "~0.7.2",
-        "grunt-contrib-uglify": "~0.2.7",
-        "load-grunt-tasks": "~0.2.0",
-        "jshint-stylish": "~0.1.4",
+        "grunt-contrib-jshint": "~0.8.0",
+        "grunt-contrib-uglify": "~0.3.2",
+        "load-grunt-tasks": "~0.3.0",
+        "jshint-stylish": "~0.1.5",
         "grunt-karma": "~0.6.2",
         "grunt-ngmin": "0.0.3",
-        "karma-coverage": "~0.1.4"
+        "karma-coverage": "~0.1.5"
     },
     "engines": {
         "node": ">=0.8.0"
