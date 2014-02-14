@@ -25,6 +25,9 @@ myModule.controller('myController', function($scope, $resource, poller) {
 
     // Stop poller.
     myPoller.stop();
+
+    // Restart poller.
+    myPoller.restart();
 });
 ```
 
@@ -79,6 +82,9 @@ myModule.controller('myController', function($scope, $resource, poller) {
 
     // Stop all pollers.
     poller.stopAll();
+
+    // Restart all pollers.
+    poller.restartAll();
 
     // Stop and remove all pollers.
     poller.reset();
