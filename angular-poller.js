@@ -127,6 +127,20 @@
 
                     $timeout.cancel(this.timeout);
                     this.timeout.$$timeoutId = null;
+                },
+
+                /*
+                 * Restart poller service
+                 *
+                 * If poller is still running, then restart it right away.
+                 * If poller is stopped, start it again.
+                 */
+                restart: function () {
+
+                    if (this.timeout.$$timeoutId) {
+                        this.stop();
+                    }
+                    this.start();
                 }
             });
 
@@ -150,15 +164,7 @@
                     } else {
 
                         poller.set(options);
-
-                        /*
-                         * If poller is still running, then restart it right away.
-                         * If poller is stopped, start it again.
-                         */
-                        if (poller.timeout.$$timeoutId) {
-                            poller.stop();
-                        }
-                        poller.start();
+                        poller.restart();
                     }
 
                     return poller;
@@ -173,6 +179,13 @@
                 stopAll: function () {
                     angular.forEach(pollers, function (p) {
                         p.stop();
+                    });
+                },
+
+                // Restart all poller services
+                restartAll: function () {
+                    angular.forEach(pollers, function (p) {
+                        p.restart();
                     });
                 },
 

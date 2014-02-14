@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Poller Service:', function () {
+describe('Poller registry:', function () {
 
     describe('get:', function () {
 
