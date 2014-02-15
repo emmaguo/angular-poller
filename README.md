@@ -1,5 +1,5 @@
 # Angular Poller
-[![Build Status](https://travis-ci.org/emmaguo/angular-poller.png)](https://travis-ci.org/emmaguo/angular-poller)
+[![Build Status](https://travis-ci.org/emmaguo/angular-poller.png?branch=master)](https://travis-ci.org/emmaguo/angular-poller)
 [![Dependency Status](https://david-dm.org/emmaguo/angular-poller.png)](https://david-dm.org/emmaguo/angular-poller#info=dependencies)
 [![devDependency Status](https://david-dm.org/emmaguo/angular-poller/dev-status.png)](https://david-dm.org/emmaguo/angular-poller#info=devDependencies)
 [![Coverage Status](https://coveralls.io/repos/emmaguo/angular-poller/badge.png?branch=master)](https://coveralls.io/r/emmaguo/angular-poller?branch=master)
