@@ -47,6 +47,6 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('test', ['jshint', 'karma']);
-    grunt.registerTask('default', ['test', 'coveralls', 'ngmin', 'uglify']);
+    grunt.registerTask('test', ['jshint', 'karma', 'coveralls']);
+    grunt.registerTask('default', ['test', 'ngmin', 'uglify']);
 };
