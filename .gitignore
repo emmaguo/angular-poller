@@ -1,4 +1,5 @@
 .idea
+.coveralls.yml
 node_modules
 bower_components
 coverage
