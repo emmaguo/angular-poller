@@ -1,6 +1,6 @@
 {
     "name": "angular-poller",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "dependencies": {},
     "devDependencies": {
         "karma": "~0.10.9",
