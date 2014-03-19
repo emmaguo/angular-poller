@@ -15,11 +15,11 @@
         "!README.md"
     ],
     "dependencies": {
-        "angular": "~1.2.4",
-        "angular-resource": "~1.2.4"
+        "angular": "~1.2.14",
+        "angular-resource": "~1.2.14"
     },
     "devDependencies": {
-        "angular-mocks": "~1.2.4"
+        "angular-mocks": "~1.2.14"
     },
     "keywords": [
         "AngularJS",
