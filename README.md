@@ -9,6 +9,13 @@ Lightweight [AngularJS](http://angularjs.org/) poller service which can be easil
 ## Install
 Download [angular-poller.min.js](https://raw.github.com/emmaguo/angular-poller/master/angular-poller.min.js) or simply run: `bower install angular-poller`.
 
+Add a `<script>` to `index.html`:
+
+```html
+<script src="/bower_components/angular/angular.js"></script>
+<script src="/bower_components/angular-poller/angular-poller.js"></script>
+```
+
 ## Basic Usage
 ```javascript
 // Inject angular poller service.
