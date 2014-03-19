@@ -6,7 +6,7 @@ describe('Poller model:', function () {
 
     beforeEach(function () {
 
-        module('poller', 'ngResource');
+        module('ngPoller', 'ngResource');
 
         inject(function (_$resource_, _$timeout_, _$httpBackend_, _poller_) {
             $resource = _$resource_;

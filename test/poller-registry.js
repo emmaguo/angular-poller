@@ -6,7 +6,7 @@ describe('Poller registry:', function () {
 
     beforeEach(function () {
 
-        module('poller', 'ngResource');
+        module('ngPoller', 'ngResource');
 
         inject(function (_$resource_, _poller_) {
             $resource = _$resource_;
