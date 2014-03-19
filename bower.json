@@ -9,15 +9,10 @@
         "email": "emmahongguo@gmail.com"
     },
     "ignore": [
-        "test",
-        ".gitignore",
-        ".bowerrc",
-        ".jshintrc",
-        "bower.json",
-        "package.json",
-        "Gruntfile.js",
-        "karma.conf.js",
-        "LICENSE.md"
+        "*",
+        "!angular-poller.js",
+        "!angular-poller.min.js",
+        "!README.md"
     ],
     "dependencies": {
         "angular": "~1.2.4",
