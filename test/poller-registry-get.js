@@ -8,7 +8,7 @@ describe('Poller registry:', function () {
 
         beforeEach(function () {
 
-            module('ngPoller', 'ngResource');
+            module('emguo.poller', 'ngResource');
 
             inject(function (_$resource_, _poller_) {
                 $resource = _$resource_;

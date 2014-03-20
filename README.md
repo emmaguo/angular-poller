@@ -25,7 +25,7 @@ Add a `<script>` to your `index.html`:
 ## Basic Usage
 ```javascript
 // Inject angular poller service.
-var myModule = angular.module('myApp', ['ngPoller']);
+var myModule = angular.module('myApp', ['emguo.poller']);
 
 myModule.controller('myController', function($scope, $resource, poller) {
 
@@ -51,7 +51,7 @@ myModule.controller('myController', function($scope, $resource, poller) {
 ### Customization
 ```javascript
 // Inject angular poller service.
-var myModule = angular.module('myApp', ['ngPoller']);
+var myModule = angular.module('myApp', ['emguo.poller']);
 
 myModule.controller('myController', function($scope, $resource, poller) {
 
@@ -82,7 +82,7 @@ myModule.controller('myController', function($scope, $resource, poller) {
 ### Multiple Resources
 ```javascript
 // Inject angular poller service.
-var myModule = angular.module('myApp', ['ngPoller']);
+var myModule = angular.module('myApp', ['emguo.poller']);
 
 myModule.controller('myController', function($scope, $resource, poller) {
 
@@ -109,7 +109,7 @@ myModule.controller('myController', function($scope, $resource, poller) {
 ### Multiple Controllers
 ```javascript
 // Inject angular poller service.
-var myModule = angular.module('myApp', ['ngPoller']);
+var myModule = angular.module('myApp', ['emguo.poller']);
 
 // Create resource factory.
 myModule.factory('myResource', function ($resource) {

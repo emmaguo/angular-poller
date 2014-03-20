@@ -9,7 +9,7 @@
 
     'use strict';
 
-    angular.module('ngPoller', [])
+    angular.module('emguo.poller', [])
 
         /*
          * Usage:
