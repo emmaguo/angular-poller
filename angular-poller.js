@@ -104,22 +104,25 @@
                 // Start poller service
                 start: function () {
 
-                    var deferred = $q.defer(),
-                        resource = this.resource,
+                    var resource = this.resource,
                         action = this.action,
                         delay = this.delay,
                         params = this.params,
                         self = this;
 
+                    if (!this.deferred) {
+                        this.deferred = $q.defer();
+                    }
+
                     (function tick() {
                         resource[action](params, function (data) {
-                            deferred.notify(data);
+                            self.deferred.notify(data);
                         });
 
                         self.timeout = $timeout(tick, delay);
                     })();
 
-                    this.promise = deferred.promise;
+                    this.promise = this.deferred.promise;
                 },
 
                 // Stop poller service
