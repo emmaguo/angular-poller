@@ -1,6 +1,6 @@
 /**
  * Poller service for AngularJS
- * @version v0.1.3
+ * @version v0.2.0
  * @link http://github.com/emmaguo/angular-poller
  * @license MIT
  */
