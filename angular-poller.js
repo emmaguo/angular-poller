@@ -121,12 +121,15 @@
                     this.promise = this.deferred.promise;
                 },
 
-                tick: function (resource, action, params) {
+                tick: function(resource, action, params) {
                     var self = this;
-                    resource[action](params, function (data) {
-                        self.deferred.notify(data);
-                        self.start();
-                    });
+                    resource[action](params).$promise
+                        .then(function(data) {
+                            self.deferred.notify(data);
+                        })
+                        .finally(function() {
+                            self.start();
+                        });
                 },
 
                 // Stop poller service
