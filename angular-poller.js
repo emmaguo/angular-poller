@@ -114,13 +114,13 @@
                         this.deferred = $q.defer();
                     }
 
-                    (function tick() {
-                        resource[action](params, function (data) {
+                    resource[action](params).$promise
+                        .then(function(data) {
                             self.deferred.notify(data);
+                            self.timeout = $timeout(function() {
+                                self.start(resource, action, params);
+                            }, delay);
                         });
-
-                        self.timeout = $timeout(tick, delay);
-                    })();
 
                     this.promise = this.deferred.promise;
                 },
