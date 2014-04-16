@@ -114,15 +114,19 @@
                         this.deferred = $q.defer();
                     }
 
-                    resource[action](params).$promise
-                        .then(function(data) {
-                            self.deferred.notify(data);
-                            self.timeout = $timeout(function() {
-                                self.start(resource, action, params);
-                            }, delay);
-                        });
+                    this.timeout = $timeout(function () {
+                        self.tick(resource, action, params);
+                    }, delay);
 
                     this.promise = this.deferred.promise;
+                },
+
+                tick: function (resource, action, params) {
+                    var self = this;
+                    resource[action](params, function (data) {
+                        self.deferred.notify(data);
+                        self.start();
+                    });
                 },
 
                 // Stop poller service
