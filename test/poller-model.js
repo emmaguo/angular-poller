@@ -42,6 +42,7 @@ describe('Poller model:', function () {
             result2 = data;
         });
 
+        $timeout.flush();
         $httpBackend.flush();
     });
 

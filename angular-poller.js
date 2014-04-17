@@ -62,6 +62,7 @@
                 Poller = function (resource, options) {
 
                     this.resource = resource;
+                    this.active = false;
                     this.set(options);
                 },
 
@@ -114,12 +115,21 @@
                         this.deferred = $q.defer();
                     }
 
-                    (function tick() {
-                        resource[action](params, function (data) {
-                            self.deferred.notify(data);
-                        });
+                    this.active = true;
 
-                        self.timeout = $timeout(tick, delay);
+                    (function tick() {
+                        if (!self.active) {
+                            return;
+                        }
+                        self.timeout = $timeout(function () {
+                            resource[action](params).$promise
+                                .then(function(data) {
+                                    self.deferred.notify(data);
+                                })
+                                .finally(function () {
+                                    tick();
+                                });
+                        }, delay);
                     })();
 
                     this.promise = this.deferred.promise;
@@ -128,6 +138,7 @@
                 // Stop poller service
                 stop: function () {
 
+                    this.active = false;
                     $timeout.cancel(this.timeout);
                     this.timeout.$$timeoutId = null;
                 },
