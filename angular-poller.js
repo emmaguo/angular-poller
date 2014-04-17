@@ -62,6 +62,7 @@
                 Poller = function (resource, options) {
 
                     this.resource = resource;
+                    this.active = false;
                     this.set(options);
                 },
 
@@ -114,27 +115,30 @@
                         this.deferred = $q.defer();
                     }
 
-                    this.timeout = $timeout(function () {
-                        self.tick(resource, action, params);
-                    }, delay);
+                    this.active = true;
+
+                    (function tick() {
+                        if (!self.active) {
+                            return;
+                        }
+                        self.timeout = $timeout(function () {
+                            resource[action](params).$promise
+                                .then(function(data) {
+                                    self.deferred.notify(data);
+                                })
+                                .finally(function () {
+                                    tick();
+                                });
+                        }, delay);
+                    })();
 
                     this.promise = this.deferred.promise;
-                },
-
-                tick: function(resource, action, params) {
-                    var self = this;
-                    resource[action](params).$promise
-                        .then(function(data) {
-                            self.deferred.notify(data);
-                        })
-                        .finally(function() {
-                            self.start();
-                        });
                 },
 
                 // Stop poller service
                 stop: function () {
 
+                    this.active = false;
                     $timeout.cancel(this.timeout);
                     this.timeout.$$timeoutId = null;
                 },
