@@ -2,15 +2,15 @@
 
 describe('Poller model:', function () {
 
-    var $resource, $timeout, $httpBackend, poller, resource1, resource2, poller1, poller2, result1, result2;
+    var $resource, $interval, $httpBackend, poller, resource1, resource2, poller1, poller2, result1, result2;
 
     beforeEach(function () {
 
         module('emguo.poller', 'ngResource');
 
-        inject(function (_$resource_, _$timeout_, _$httpBackend_, _poller_) {
+        inject(function (_$resource_, _$interval_, _$httpBackend_, _poller_) {
             $resource = _$resource_;
-            $timeout = _$timeout_;
+            $interval = _$interval_;
             $httpBackend = _$httpBackend_;
             poller = _poller_;
         });
@@ -81,26 +81,26 @@ describe('Poller model:', function () {
         expect(poller1).to.have.property('promise');
     });
 
-    it('should maintain a timeout ID to manage polling.', function () {
-        expect(poller1).to.have.property('timeout').to.have.property('$$timeoutId');
+    it('should maintain a interval ID to manage polling.', function () {
+        expect(poller1).to.have.property('interval').to.have.property('$$intervalId');
     });
 
-    it('should stop polling and reset timeout ID on invoking stop().', function () {
+    it('should stop polling and reset interval ID on invoking stop().', function () {
         poller1.stop();
-        expect(poller1.timeout.$$timeoutId).to.equal(null);
+        expect(poller1.interval).to.equal(null);
     });
 
     it('should restart currently running poller on invoking restart().', function () {
-        var timeoutId = poller1.timeout.$$timeoutId;
+        var intervalId = poller1.interval.$$intervalId;
         poller1.restart();
-        expect(poller1.timeout.$$timeoutId).to.not.equal(timeoutId);
+        expect(poller1.interval.$$intervalId).to.not.equal(intervalId);
     });
 
     it('should start already stopped poller on invoking restart().', function () {
         poller1.stop();
-        expect(poller1.timeout.$$timeoutId).to.equal(null);
+        expect(poller1.interval).to.equal(null);
         poller1.restart();
-        expect(poller1.timeout.$$timeoutId).to.not.equal(null);
+        expect(poller1.interval).to.not.equal(null);
     });
 
     it('should have correct data in callback.', function () {
@@ -121,7 +121,7 @@ describe('Poller model:', function () {
         $httpBackend.expect('GET', '/user?id=123').respond(
             {id: 123, name: 'Alice', number: '456'}
         );
-        $timeout.flush();
+        $interval.flush(6000);
         $httpBackend.flush();
 
         expect(result1.length).to.equal(3);

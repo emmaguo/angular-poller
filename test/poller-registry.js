@@ -27,24 +27,24 @@ describe('Poller registry:', function () {
 
     it('should stop all poller services on invoking stopAll().', function () {
         poller.stopAll();
-        expect(poller1.timeout.$$timeoutId).to.equal(null);
-        expect(poller2.timeout.$$timeoutId).to.equal(null);
+        expect(poller1.interval).to.equal(null);
+        expect(poller2.interval).to.equal(null);
     });
 
     it('should restart all poller services on invoking restartAll().', function () {
-        var timeoutId1 = poller1.timeout.$$timeoutId,
-            timeoutId2 = poller2.timeout.$$timeoutId;
+        var intervalId1 = poller1.interval.$$intervalId,
+            intervalId2 = poller2.interval.$$intervalId;
 
         poller.restartAll();
 
-        expect(poller1.timeout.$$timeoutId).to.not.equal(timeoutId1);
-        expect(poller2.timeout.$$timeoutId).to.not.equal(timeoutId2);
+        expect(poller1.interval.$$intervalId).to.not.equal(intervalId1);
+        expect(poller2.interval.$$intervalId).to.not.equal(intervalId2);
     });
 
     it('should stop and remove all poller services on invoking reset().', function () {
         poller.reset();
-        expect(poller1.timeout.$$timeoutId).to.equal(null);
-        expect(poller2.timeout.$$timeoutId).to.equal(null);
+        expect(poller1.interval).to.equal(null);
+        expect(poller2.interval).to.equal(null);
         expect(poller.size()).to.equal(0);
     });
 });
