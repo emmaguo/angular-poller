@@ -35,7 +35,7 @@ describe('Poller registry:', function () {
             });
 
             it('should start poller.', function () {
-                expect(myPoller.timeout.$$timeoutId).not.to.equal(null);
+                expect(myPoller.interval.$$intervalId).not.to.equal(null);
             });
         });
 
@@ -93,15 +93,15 @@ describe('Poller registry:', function () {
 
             it('should start polling if it is currently stopped.', function () {
                 myPoller.stop();
-                expect(myPoller.timeout.$$timeoutId).to.equal(null);
+                expect(myPoller.interval).to.equal(null);
                 anotherPoller = poller.get(myResource);
-                expect(myPoller.timeout.$$timeoutId).to.not.equal(null);
+                expect(myPoller.interval.$$intervalId).to.not.equal(null);
             });
 
             it('should restart polling if it is currently running.', function () {
-                var timeoutId = myPoller.timeout.$$timeoutId;
+                var intervalId = myPoller.interval.$$intervalId;
                 anotherPoller = poller.get(myResource);
-                expect(anotherPoller.timeout.$$timeoutId).to.not.equal(timeoutId);
+                expect(anotherPoller.interval.$$intervalId).to.not.equal(intervalId);
             });
         });
     });

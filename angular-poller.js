@@ -31,7 +31,7 @@
          * Most likely you only need the notifyCallback, in which case you will use:
          *      myPoller.promise.then(null, null, notifyCallback);
          */
-        .factory('poller', function ($timeout, $q) {
+        .factory('poller', function ($interval, $q) {
 
             var pollers = [], // Poller registry
 
@@ -57,7 +57,7 @@
                  *  - delay
                  *  - params
                  *  - promise
-                 *  - timeout
+                 *  - interval
                  */
                 Poller = function (resource, options) {
 
@@ -114,22 +114,25 @@
                         this.deferred = $q.defer();
                     }
 
-                    (function tick() {
+                    var tick = function(){
                         resource[action](params, function (data) {
                             self.deferred.notify(data);
                         });
+                    };
 
-                        self.timeout = $timeout(tick, delay);
-                    })();
+                    tick();
+
+                    this.interval = $interval(tick, delay);
 
                     this.promise = this.deferred.promise;
                 },
 
                 // Stop poller service
                 stop: function () {
-
-                    $timeout.cancel(this.timeout);
-                    this.timeout.$$timeoutId = null;
+                    if(angular.isDefined(this.interval)){
+                        $interval.cancel(this.interval);
+                        this.interval = null;
+                    }
                 },
 
                 /*
@@ -140,7 +143,7 @@
                  */
                 restart: function () {
 
-                    if (this.timeout.$$timeoutId) {
+                    if(angular.isDefined(this.interval)){
                         this.stop();
                     }
                     this.start();
