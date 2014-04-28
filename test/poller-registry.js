@@ -27,8 +27,8 @@ describe('Poller registry:', function () {
 
     it('should stop all poller services on invoking stopAll().', function () {
         poller.stopAll();
-        expect(poller1.interval).to.equal(null);
-        expect(poller2.interval).to.equal(null);
+        expect(poller1.interval).to.equal(undefined);
+        expect(poller2.interval).to.equal(undefined);
     });
 
     it('should restart all poller services on invoking restartAll().', function () {
@@ -43,8 +43,8 @@ describe('Poller registry:', function () {
 
     it('should stop and remove all poller services on invoking reset().', function () {
         poller.reset();
-        expect(poller1.interval).to.equal(null);
-        expect(poller2.interval).to.equal(null);
+        expect(poller1.interval).to.equal(undefined);
+        expect(poller2.interval).to.equal(undefined);
         expect(poller.size()).to.equal(0);
     });
 });

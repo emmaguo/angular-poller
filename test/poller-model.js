@@ -81,13 +81,13 @@ describe('Poller model:', function () {
         expect(poller1).to.have.property('promise');
     });
 
-    it('should maintain a interval ID to manage polling.', function () {
+    it('should maintain an interval ID to manage polling.', function () {
         expect(poller1).to.have.property('interval').to.have.property('$$intervalId');
     });
 
-    it('should stop polling and reset interval ID on invoking stop().', function () {
+    it('should stop polling and reset interval on invoking stop().', function () {
         poller1.stop();
-        expect(poller1.interval).to.equal(null);
+        expect(poller1.interval).to.equal(undefined);
     });
 
     it('should restart currently running poller on invoking restart().', function () {
@@ -98,9 +98,9 @@ describe('Poller model:', function () {
 
     it('should start already stopped poller on invoking restart().', function () {
         poller1.stop();
-        expect(poller1.interval).to.equal(null);
+        expect(poller1.interval).to.equal(undefined);
         poller1.restart();
-        expect(poller1.interval).to.not.equal(null);
+        expect(poller1.interval).to.not.equal(undefined);
     });
 
     it('should have correct data in callback.', function () {

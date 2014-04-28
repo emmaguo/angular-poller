@@ -114,7 +114,7 @@
                         this.deferred = $q.defer();
                     }
 
-                    var tick = function(){
+                    var tick = function () {
                         resource[action](params, function (data) {
                             self.deferred.notify(data);
                         });
@@ -129,9 +129,10 @@
 
                 // Stop poller service
                 stop: function () {
-                    if(angular.isDefined(this.interval)){
+
+                    if (angular.isDefined(this.interval)) {
                         $interval.cancel(this.interval);
-                        this.interval = null;
+                        this.interval = undefined;
                     }
                 },
 
@@ -143,7 +144,7 @@
                  */
                 restart: function () {
 
-                    if(angular.isDefined(this.interval)){
+                    if (angular.isDefined(this.interval)) {
                         this.stop();
                     }
                     this.start();
@@ -155,7 +156,7 @@
                 /*
                  * Return a singleton instance of a poller.
                  * If poller does not exist, then register and start it.
-                 * Otherwise return it and restart it if neccessary.
+                 * Otherwise return it and restart it if necessary.
                  */
                 get: function (resource, options) {
 

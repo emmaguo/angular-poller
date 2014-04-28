@@ -93,7 +93,7 @@ describe('Poller registry:', function () {
 
             it('should start polling if it is currently stopped.', function () {
                 myPoller.stop();
-                expect(myPoller.interval).to.equal(null);
+                expect(myPoller.interval).to.equal(undefined);
                 anotherPoller = poller.get(myResource);
                 expect(myPoller.interval.$$intervalId).to.not.equal(null);
             });
