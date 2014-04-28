@@ -114,20 +114,19 @@
                         this.deferred = $q.defer();
                     }
 
-                    var tick = function () {
+                    function tick () {
                         resource[action](params, function (data) {
                             self.deferred.notify(data);
                         });
-                    };
+                    }
 
                     tick();
-
                     this.interval = $interval(tick, delay);
 
                     this.promise = this.deferred.promise;
                 },
 
-                // Stop poller service
+                // Stop poller service if it is running
                 stop: function () {
 
                     if (angular.isDefined(this.interval)) {
@@ -136,17 +135,9 @@
                     }
                 },
 
-                /*
-                 * Restart poller service
-                 *
-                 * If poller is still running, then restart it right away.
-                 * If poller is stopped, start it again.
-                 */
+                // Restart poller service
                 restart: function () {
-
-                    if (angular.isDefined(this.interval)) {
-                        this.stop();
-                    }
+                    this.stop();
                     this.start();
                 }
             });
