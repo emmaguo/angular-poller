@@ -27,6 +27,7 @@ section {
 
 blockquote {
     margin-bottom: 40px;
+    min-height: 49px;
 }
 
 footer {
