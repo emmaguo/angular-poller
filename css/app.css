@@ -1,3 +1,11 @@
+html, body {
+    height: 100%;
+}
+
+.wrapper {
+    min-height: 100%;
+}
+
 header {
     padding: 40px 0;
     margin-bottom: 40px;
@@ -13,6 +21,10 @@ header h1 {
     background-color: #2E3E4F;
 }
 
+section {
+    padding-bottom: 80px;
+}
+
 blockquote {
     margin-bottom: 40px;
 }
@@ -20,5 +32,6 @@ blockquote {
 footer {
     text-align: center;
     padding-top: 30px;
-    padding-bottom: 30px;
+    padding-bottom: 20px;
+    margin-top: -80px;
 }

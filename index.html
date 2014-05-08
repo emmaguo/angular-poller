@@ -10,51 +10,55 @@
 </head>
 
 <body ng-controller="myController">
-<header>
-    <div class="container">
-        <h1>Angular Poller</h1>
-        <p class="lead">
-            Lightweight AngularJS poller service which can be easily injected into controllers. It uses a timer and
-            sends requests every few seconds to keep the client synced with the server.
-        </p>
-        <div class="github-fork-ribbon-wrapper right">
-            <div class="github-fork-ribbon">
-                <a href="https://github.com/emmaguo/angular-poller">Fork me on GitHub</a>
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h1>Angular Poller</h1>
+
+            <p class="lead">
+                Lightweight AngularJS poller service which can be easily injected into controllers. It uses a timer and
+                sends requests every few seconds to keep the client synced with the server.
+            </p>
+
+            <div class="github-fork-ribbon-wrapper right">
+                <div class="github-fork-ribbon">
+                    <a href="https://github.com/emmaguo/angular-poller">Fork me on GitHub</a>
+                </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
-<section class="container">
-    <div class="row">
-        <div class="col-md-5">
-            <p>
-                <button class="btn btn-default" ng-click="stop()">Stop</button>
-                <button class="btn btn-default" ng-click="restart()">Restart</button>
-                <button class="btn btn-default" ng-click="faster()">Faster</button>
-                <button class="btn btn-default" ng-click="slower()">Slower</button>
-            </p>
-            <blockquote>
-                <p class="lead">
-                    {{data1.greeting}}
+    <section class="container">
+        <div class="row">
+            <div class="col-md-5">
+                <p>
+                    <button class="btn btn-default" ng-click="stop()">Stop</button>
+                    <button class="btn btn-default" ng-click="restart()">Restart</button>
+                    <button class="btn btn-default" ng-click="faster()">Faster</button>
+                    <button class="btn btn-default" ng-click="slower()">Slower</button>
                 </p>
-            </blockquote>
-            <p>
-                <button class="btn btn-default" ng-click="startPoller2()">Start Poller2</button>
-                <button class="btn btn-default" ng-click="stopBoth()">Stop Both</button>
-                <button class="btn btn-default" ng-click="restartBoth()">Restart Both</button>
-            </p>
-            <blockquote>
-                <p class="lead">
-                    {{data2 ? data2.greeting : 'Try starting the second poller.'}}
+                <blockquote>
+                    <p class="lead">
+                        {{data1.greeting}}
+                    </p>
+                </blockquote>
+                <p>
+                    <button class="btn btn-default" ng-click="startPoller2()">Start Poller2</button>
+                    <button class="btn btn-default" ng-click="stopBoth()">Stop Both</button>
+                    <button class="btn btn-default" ng-click="restartBoth()">Restart Both</button>
                 </p>
-            </blockquote>
+                <blockquote>
+                    <p class="lead">
+                        {{data2 ? data2.greeting : 'Try starting the second poller.'}}
+                    </p>
+                </blockquote>
+            </div>
+            <div class="col-md-7">
+                <div hljs include="'docs/source.js'"></div>
+            </div>
         </div>
-        <div class="col-md-7">
-            <div hljs include="'docs/source.js'"></div>
-        </div>
-    </div>
-</section>
+    </section>
+</div>
 
 <footer class="container">
     <p>Demo page for <a href="https://github.com/emmaguo/angular-poller">Angular Poller</a> by <a
