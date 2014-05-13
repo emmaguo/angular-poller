@@ -6,6 +6,8 @@
 
 Lightweight [AngularJS](http://angularjs.org/) poller service which can be easily injected into controllers. It uses a timer and sends requests every few seconds to keep the client synced with the server. If you need the data to be exact real-time such as in a chat box, you should use long polling or WebSocket instead.
 
+[Demo](http://emmaguo.github.io/angular-poller/)
+
 ## Install
 
 Install with `bower`:
@@ -72,7 +74,10 @@ myModule.controller('myController', function($scope, $resource, poller) {
         params: {
             verb: 'greet',
             salutation: 'Hello'
-        }
+        },
+        // Smart flag is set to false by default. If it is set to true then poller
+        // will only send new request after the previous one is resolved.
+        smart: true
     });
 
     myPoller.promise.then(successCallback, errorCallback, notifyCallback);

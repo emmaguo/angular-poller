@@ -1,7 +1,7 @@
 {
   "name": "angularpoller",
   "main": "angular-poller.min.js",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Poller service for AngularJS",
   "homepage": "https://github.com/emmaguo/angular-poller.git",
   "author": {
@@ -29,14 +29,14 @@
     "poller-service"
   ],
   "license": "MIT",
-  "_release": "0.2.1",
+  "_release": "0.2.2",
   "_resolution": {
     "type": "version",
-    "tag": "v0.2.1",
-    "commit": "f5c85e943b5888d668fc21345c7cf609189ad5c3"
+    "tag": "v0.2.2",
+    "commit": "e9506d98d078c35a38dded6bfd58601e8205af3e"
   },
   "_source": "git://github.com/emmaguo/angular-poller.git",
-  "_target": "~0.2.1",
+  "_target": "~0.2.2",
   "_originalSource": "angular-poller",
   "_direct": true
 }
