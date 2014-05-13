@@ -91,6 +91,16 @@ describe('Poller registry:', function () {
                 expect(anotherPoller.params.id).to.equal('123');
             });
 
+            it('should overwrite poller.smart if it is re-defined.', function () {
+                anotherPoller = poller.get(myResource, {smart: true});
+                expect(anotherPoller.smart).to.equal(true);
+            });
+
+            it('should not modify smart flag if it is not re-defined.', function () {
+                anotherPoller = poller.get(myResource);
+                expect(anotherPoller.smart).to.equal(false);
+            });
+
             it('should start polling if it is currently stopped.', function () {
                 myPoller.stop();
                 expect(myPoller.interval).to.equal(undefined);

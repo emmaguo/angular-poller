@@ -36,7 +36,8 @@ describe('Poller model:', function () {
             delay: 6000,
             params: {
                 id: 123
-            }
+            },
+            smart: true
         });
         poller2.promise.then(null, null, function (data) {
             result2 = data;
@@ -77,6 +78,14 @@ describe('Poller model:', function () {
         expect(poller2).to.have.property('params').to.have.property('id').to.equal(123);
     });
 
+    it('should have default smart flag set to false.', function () {
+        expect(poller1).to.have.property('smart').to.equal(false);
+    });
+
+    it('should have smart flag set to true if it is specified.', function () {
+        expect(poller2).to.have.property('smart').to.equal(true);
+    });
+
     it('should maintain a copy of resource promise.', function () {
         expect(poller1).to.have.property('promise');
     });
@@ -112,7 +121,6 @@ describe('Poller model:', function () {
     });
 
     it('should fetch resource every (delay) milliseconds.', function () {
-        $httpBackend.resetExpectations();
         $httpBackend.expect('GET', '/users').respond([
             {id: 123, name: 'Alice'},
             {id: 456, name: 'Bob'},

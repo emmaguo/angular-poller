@@ -24,7 +24,8 @@
          *          params: {
          *              verb: 'greet',
          *              salutation: 'Hello'
-         *          }
+         *          },
+         *          smart: true
          *      });
          *      myPoller.promise.then(successCallback, errorCallback, notifyCallback);
          *
@@ -40,6 +41,8 @@
                  * - Resource action can be anything. By default it is query.
                  * - Default delay is 5000 ms.
                  * - Default values for url parameters.
+                 * - Smart flag is set to false by default. If it is set to true then poller will only send new
+                 *   request after the previous one is resolved.
                  *
                  * Angular $resource:
                  * (http://docs.angularjs.org/api/ngResource.$resource)
@@ -47,7 +50,8 @@
                 defaults = {
                     action: 'query',
                     delay: 5000,
-                    params: {}
+                    params: {},
+                    smart: false
                 },
 
                 /*
@@ -56,6 +60,7 @@
                  *  - action
                  *  - delay
                  *  - params
+                 *  - smart
                  *  - promise
                  *  - interval
                  */
@@ -82,17 +87,17 @@
             angular.extend(Poller.prototype, {
 
                 /*
-                 * Set poller action, delay and params.
+                 * Set poller action, delay, params and smart flag.
                  *
                  * If options.params is defined, then set poller params to options.params,
                  * else if poller.params is undefined, then set it to defaults.params,
                  * else do nothing.
                  *
-                 * The same goes for poller.action and poller.delay.
+                 * The same goes for poller.action, poller.delay and poller.smart.
                  */
                 set: function (options) {
 
-                    angular.forEach(['action', 'delay', 'params'], function (prop) {
+                    angular.forEach(['action', 'delay', 'params', 'smart'], function (prop) {
                         if (options && options[prop]) {
                             this[prop] = options[prop];
                         } else if (!this[prop]) {
@@ -108,16 +113,22 @@
                         action = this.action,
                         delay = this.delay,
                         params = this.params,
-                        self = this;
+                        smart = this.smart,
+                        self = this,
+                        current;
 
                     if (!this.deferred) {
                         this.deferred = $q.defer();
                     }
 
-                    function tick () {
-                        resource[action](params, function (data) {
-                            self.deferred.notify(data);
-                        });
+                    function tick() {
+
+                        // If smart flag is true, then only send new request after the previous one is resolved.
+                        if (!smart || !angular.isDefined(current) || current.$resolved) {
+                            current = resource[action](params, function (data) {
+                                self.deferred.notify(data);
+                            });
+                        }
                     }
 
                     tick();
