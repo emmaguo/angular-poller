@@ -74,7 +74,10 @@ myModule.controller('myController', function($scope, $resource, poller) {
         params: {
             verb: 'greet',
             salutation: 'Hello'
-        }
+        },
+        // Smart flag is set to false by default. If it is set to true then poller
+        // will only send new request after the previous one is resolved.
+        smart: true
     });
 
     myPoller.promise.then(successCallback, errorCallback, notifyCallback);
