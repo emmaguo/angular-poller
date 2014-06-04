@@ -1,6 +1,6 @@
 /**
  * Poller service for AngularJS
- * @version v0.2.2
+ * @version v0.2.3
  * @link http://github.com/emmaguo/angular-poller
  * @license MIT
  */
@@ -115,7 +115,8 @@
                         params = this.params,
                         smart = this.smart,
                         self = this,
-                        current;
+                        current,
+                        timestamp;
 
                     if (!this.deferred) {
                         this.deferred = $q.defer();
@@ -125,8 +126,14 @@
 
                         // If smart flag is true, then only send new request after the previous one is resolved.
                         if (!smart || !angular.isDefined(current) || current.$resolved) {
+
+                            timestamp = new Date();
                             current = resource[action](params, function (data) {
-                                self.deferred.notify(data);
+
+                                // Ignore the response if request is sent before poller is stopped.
+                                if (!angular.isDefined(self.stopTimestamp) || timestamp >= self.stopTimestamp) {
+                                    self.deferred.notify(data);
+                                }
                             });
                         }
                     }
@@ -143,6 +150,7 @@
                     if (angular.isDefined(this.interval)) {
                         $interval.cancel(this.interval);
                         this.interval = undefined;
+                        this.stopTimestamp = new Date();
                     }
                 },
 
