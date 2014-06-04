@@ -132,19 +132,26 @@ describe('Poller model:', function () {
         expect(result2.name).to.equal('Alice');
     });
 
-    it('should fetch resource every (delay) milliseconds.', function () {
+    it('should fetch resource every (delay) milliseconds if smart flag is set to false.', function () {
+        poller2.stop();
+        $httpBackend.expect('GET', '/users').respond([]);
         $httpBackend.expect('GET', '/users').respond([
-            {id: 123, name: 'Alice'},
-            {id: 456, name: 'Bob'},
-            {id: 789, name: 'Lucy'}
+            {id: 123, name: 'Alice'}
         ]);
-        $httpBackend.expect('GET', '/user?id=123').respond(
-            {id: 123, name: 'Alice', number: '456'}
-        );
-        $interval.flush(6000);
+        $interval.flush(10100); // 5000 + 5000 + 100
         $httpBackend.flush();
 
-        expect(result1.length).to.equal(3);
-        expect(result2).to.have.property('number');
+        expect(result1.length).to.equal(1);
+    });
+
+    it('should only send new request after the previous one is resolved if smart flag is set to true', function () {
+        poller1.stop();
+        $httpBackend.expect('GET', '/user?id=123').respond(
+            {id: 123, name: 'Alice', group: 1}
+        );
+        $interval.flush(12100); // 6000 + 6000 + 100
+        $httpBackend.flush();
+
+        expect(result2.group).to.equal(1);
     });
 });
