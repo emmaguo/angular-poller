@@ -97,6 +97,18 @@ describe('Poller model:', function () {
     it('should stop polling and reset interval on invoking stop().', function () {
         poller1.stop();
         expect(poller1.interval).to.equal(undefined);
+        expect(Number(poller1.stopTimestamp)).to.equal(Number(new Date()));
+    });
+
+    it('should ignore the response if request is sent before stop() is invoked', function () {
+        $httpBackend.expect('GET', '/users').respond([
+            {id: 123, name: 'Alice'}
+        ]);
+        $interval.flush(5500);
+        poller1.stop();
+        $httpBackend.flush();
+
+        expect(result1.length).to.equal(2);
     });
 
     it('should restart currently running poller on invoking restart().', function () {
