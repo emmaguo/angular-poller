@@ -1,8 +1,30 @@
 /**
- * Poller service for AngularJS
+ * angular-poller
+ *
+ * @description
+ * Angular poller service. It uses a timer and sends requests every few seconds to
+ * keep the client synced with the server.
+ *
  * @version v0.2.3
  * @link http://github.com/emmaguo/angular-poller
  * @license MIT
+ *
+ * @example
+ * Simple example:
+ *      var myPoller = poller.get(myResource);
+ *      myPoller.promise.then(successCallback, errorCallback, notifyCallback);
+ *
+ * Advanced example:
+ *      var myPoller = poller.get(myResource, {
+ *          action: 'get',
+ *          delay: 6000,
+ *          params: {
+ *              verb: 'greet',
+ *              salutation: 'Hello'
+ *          },
+ *          smart: true
+ *      });
+ *      myPoller.promise.then(successCallback, errorCallback, notifyCallback);
  */
 
 (function (window, angular, undefined) {
@@ -11,42 +33,33 @@
 
     angular.module('emguo.poller', [])
 
-        /*
-         * Usage:
-         * - Simple example:
-         *      var myPoller = poller.get(myResource);
-         *      myPoller.promise.then(successCallback, errorCallback, notifyCallback);
-         *
-         * - Advanced example:
-         *      var myPoller = poller.get(myResource, {
-         *          action: 'get',
-         *          delay: 6000,
-         *          params: {
-         *              verb: 'greet',
-         *              salutation: 'Hello'
-         *          },
-         *          smart: true
-         *      });
-         *      myPoller.promise.then(successCallback, errorCallback, notifyCallback);
-         *
-         * Most likely you only need the notifyCallback, in which case you will use:
-         *      myPoller.promise.then(null, null, notifyCallback);
-         */
+        .constant('pollerConfig', {
+            stopOnRouteChange: false,
+            stopOnStateChange: false
+        })
+
+        .run(function ($rootScope, poller, pollerConfig) {
+
+            /**
+             * Automatically stop all pollers before route change ($routeProvider) or state change ($stateProvider).
+             */
+            if (pollerConfig.stopOnRouteChange) {
+
+                $rootScope.$on('$routeChangeStart', function () {
+                    poller.stopAll();
+                });
+            } else if (pollerConfig.stopOnStateChange) {
+
+                $rootScope.$on('$stateChangeStart', function () {
+                    poller.stopAll();
+                });
+            }
+        })
+
         .factory('poller', function ($interval, $q) {
 
             var pollers = [], // Poller registry
 
-                /*
-                 * Default settings:
-                 * - Resource action can be anything. By default it is query.
-                 * - Default delay is 5000 ms.
-                 * - Default values for url parameters.
-                 * - Smart flag is set to false by default. If it is set to true then poller will only send new
-                 *   request after the previous one is resolved.
-                 *
-                 * Angular $resource:
-                 * (http://docs.angularjs.org/api/ngResource.$resource)
-                 */
                 defaults = {
                     action: 'query',
                     delay: 5000,
@@ -54,15 +67,18 @@
                     smart: false
                 },
 
-                /*
+                /**
                  * Poller model:
-                 *  - resource
+                 *  - resource (http://docs.angularjs.org/api/ngResource.$resource)
                  *  - action
                  *  - delay
                  *  - params
-                 *  - smart
+                 *  - smart (if set to true then only send new request after the previous one is resolved)
                  *  - promise
                  *  - interval
+                 *
+                 * @param resource
+                 * @param options
                  */
                 Poller = function (resource, options) {
 
@@ -70,7 +86,12 @@
                     this.set(options);
                 },
 
-                // Find poller by resource in poller registry.
+                /**
+                 * Find poller by resource in poller registry.
+                 *
+                 * @param resource
+                 * @returns {object}
+                 */
                 findPoller = function (resource) {
 
                     var poller = null;
@@ -86,14 +107,14 @@
 
             angular.extend(Poller.prototype, {
 
-                /*
+                /**
                  * Set poller action, delay, params and smart flag.
                  *
                  * If options.params is defined, then set poller params to options.params,
                  * else if poller.params is undefined, then set it to defaults.params,
-                 * else do nothing.
+                 * else do nothing. The same goes for poller.action, poller.delay and poller.smart.
                  *
-                 * The same goes for poller.action, poller.delay and poller.smart.
+                 * @param options
                  */
                 set: function (options) {
 
@@ -106,7 +127,9 @@
                     }, this);
                 },
 
-                // Start poller service
+                /**
+                 * Start poller service.
+                 */
                 start: function () {
 
                     var resource = this.resource,
@@ -144,7 +167,9 @@
                     this.promise = this.deferred.promise;
                 },
 
-                // Stop poller service if it is running
+                /**
+                 * Stop poller service if it is running.
+                 */
                 stop: function () {
 
                     if (angular.isDefined(this.interval)) {
@@ -154,7 +179,9 @@
                     }
                 },
 
-                // Restart poller service
+                /**
+                 * Restart poller service.
+                 */
                 restart: function () {
                     this.stop();
                     this.start();
@@ -163,10 +190,13 @@
 
             return {
 
-                /*
-                 * Return a singleton instance of a poller.
-                 * If poller does not exist, then register and start it.
-                 * Otherwise return it and restart it if necessary.
+                /**
+                 * Return a singleton instance of a poller. If poller does not exist, then register and
+                 * start it. Otherwise return it and restart it if necessary.
+                 *
+                 * @param resource
+                 * @param options
+                 * @returns {object}
                  */
                 get: function (resource, options) {
 
@@ -187,26 +217,36 @@
                     return poller;
                 },
 
-                // Total number of pollers in poller registry
+                /**
+                 * Total number of pollers in poller registry.
+                 *
+                 * @returns {number}
+                 */
                 size: function () {
                     return pollers.length;
                 },
 
-                // Stop all poller services
+                /**
+                 * Stop all poller services.
+                 */
                 stopAll: function () {
                     angular.forEach(pollers, function (p) {
                         p.stop();
                     });
                 },
 
-                // Restart all poller services
+                /**
+                 * Restart all poller services.
+                 */
                 restartAll: function () {
                     angular.forEach(pollers, function (p) {
                         p.restart();
                     });
                 },
 
-                // Stop and remove all poller services
+                /**
+                 * Stop and remove all poller services
+                 */
                 reset: function () {
                     this.stopAll();
                     pollers = [];
