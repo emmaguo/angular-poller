@@ -24,6 +24,7 @@
         "it": false,
         "expect": false,
         "describe": false,
-        "inject": false
+        "inject": false,
+        "sinon": false
     }
 }
