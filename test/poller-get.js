@@ -22,10 +22,6 @@ describe('Poller registry:', function () {
                 myPoller = poller.get($resource('/test'));
             });
 
-            afterEach(function () {
-                poller.reset();
-            });
-
             it('should create new poller on invoking get().', function () {
                 expect(myPoller).to.not.equal(null);
             });
@@ -50,10 +46,6 @@ describe('Poller registry:', function () {
                         id: '123'
                     }
                 });
-            });
-
-            afterEach(function () {
-                poller.reset();
             });
 
             it('should not create a new poller on invoking get().', function () {

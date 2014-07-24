@@ -43,11 +43,12 @@ describe('Poller model:', function () {
             result2 = data;
         });
 
-        $httpBackend.flush();
+        $httpBackend.flush(2);
     });
 
     afterEach(function () {
-        poller.reset();
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
     });
 
     it('should have resource property.', function () {
@@ -95,33 +96,53 @@ describe('Poller model:', function () {
     });
 
     it('should stop polling and reset interval on invoking stop().', function () {
+        var current = new Date();
         poller1.stop();
         expect(poller1.interval).to.equal(undefined);
-        expect(Number(poller1.stopTimestamp)).to.equal(Number(new Date()));
+        expect(current - poller1.stopTimestamp).to.be.at.most(1);
     });
 
     it('should ignore the response if request is sent before stop() is invoked', function () {
+        poller2.stop();
         $httpBackend.expect('GET', '/users').respond([
             {id: 123, name: 'Alice'}
         ]);
-        $interval.flush(5500);
+        $interval.flush(6000); // 5000 + 1000
         poller1.stop();
-        $httpBackend.flush();
+        $httpBackend.flush(1);
 
         expect(result1.length).to.equal(2);
     });
 
     it('should restart currently running poller on invoking restart().', function () {
         var intervalId = poller1.interval.$$intervalId;
+
+        $httpBackend.expect('GET', '/users').respond([
+            {id: 123, name: 'Alice'},
+            {id: 456, name: 'Bob'},
+            {id: 789, name: 'John'}
+        ]);
         poller1.restart();
+        $httpBackend.flush(1);
+
         expect(poller1.interval.$$intervalId).to.not.equal(intervalId);
+        expect(result1.length).to.equal(3);
     });
 
     it('should start already stopped poller on invoking restart().', function () {
         poller1.stop();
         expect(poller1.interval).to.equal(undefined);
+
+        $httpBackend.expect('GET', '/users').respond([
+            {id: 123, name: 'Alice'},
+            {id: 456, name: 'Bob'},
+            {id: 789, name: 'John'}
+        ]);
         poller1.restart();
+        $httpBackend.flush(1);
+
         expect(poller1.interval).to.not.equal(undefined);
+        expect(result1.length).to.equal(3);
     });
 
     it('should have correct data in callback.', function () {
@@ -139,7 +160,7 @@ describe('Poller model:', function () {
             {id: 123, name: 'Alice'}
         ]);
         $interval.flush(10100); // 5000 + 5000 + 100
-        $httpBackend.flush();
+        $httpBackend.flush(2);
 
         expect(result1.length).to.equal(1);
     });
@@ -150,7 +171,7 @@ describe('Poller model:', function () {
             {id: 123, name: 'Alice', group: 1}
         );
         $interval.flush(12100); // 6000 + 6000 + 100
-        $httpBackend.flush();
+        $httpBackend.flush(1);
 
         expect(result2.group).to.equal(1);
     });

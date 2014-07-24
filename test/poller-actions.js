@@ -17,10 +17,6 @@ describe('Poller registry:', function () {
         poller2 = poller.get($resource('/test2'));
     });
 
-    afterEach(function () {
-        poller.reset();
-    });
-
     it('should return correct number of pollers on invoking size().', function () {
         expect(poller.size()).to.equal(2);
     });
