@@ -104,12 +104,11 @@ describe('Poller model:', function () {
 
     it('should ignore the response if request is sent before stop() is invoked', function () {
         poller2.stop();
-        $httpBackend.expect('GET', '/users').respond([
-            {id: 123, name: 'Alice'}
-        ]);
-        $interval.flush(6000); // 5000 + 1000
+        $httpBackend.expect('GET', '/users').respond([]);
+        $interval.flush(5000); // Request at t = 5000 ms.
         poller1.stop();
-        $httpBackend.flush(1);
+        poller1.stopTimestamp = poller1.stopTimestamp + 100; // Poller1 is stopped at t = 5100 ms.
+        $httpBackend.flush(1); // Response is ignored because request is sent before poller1 is stopped.
 
         expect(result1.length).to.equal(2);
     });
