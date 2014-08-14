@@ -17,8 +17,6 @@ bower install angular-poller
 Add a `<script>` to your `index.html`:
 
 ```html
-<script src="/bower_components/angular/angular.js"></script>
-<script src="/bower_components/angular-resource/angular-resource.js"></script>
 <script src="/bower_components/angular-poller/angular-poller.js"></script>
 ```
 
@@ -35,8 +33,9 @@ myModule.controller('myController', function($scope, $resource, poller) {
     // Get poller. This also starts/restarts poller.
     var myPoller = poller.get(myResource);
 
-    // Update view. Most likely you only need to define notifyCallback.
-    myPoller.promise.then(successCallback, errorCallback, notifyCallback);
+    // Update view. Poller promise only gets notified if the request is
+    // successful, so you should use notifyCallback.
+    myPoller.promise.then(null, null, notifyCallback);
 
     // Stop poller.
     myPoller.stop();
@@ -78,7 +77,7 @@ myModule.controller('myController', function($scope, $resource, poller) {
         smart: true
     });
 
-    myPoller.promise.then(successCallback, errorCallback, notifyCallback);
+    myPoller.promise.then(null, null, notifyCallback);
 });
 ```
 
@@ -95,8 +94,8 @@ myModule.controller('myController', function($scope, $resource, poller) {
         poller1 = poller.get(resource1),
         poller2 = poller.get(resource2);
 
-    poller1.promise.then(successCallback, errorCallback, notifyCallback);
-    poller2.promise.then(successCallback, errorCallback, notifyCallback);
+    poller1.promise.then(null, null, notifyCallback);
+    poller2.promise.then(null, null, notifyCallback);
 
     // Stop all pollers.
     poller.stopAll();
@@ -122,13 +121,13 @@ myModule.factory('myResource', function ($resource) {
 myModule.controller('controller1', function($scope, poller, myResource) {
     // Register and start poller.
     var myPoller = poller.get(myResource);
-    myPoller.promise.then(successCallback, errorCallback, notifyCallback);
+    myPoller.promise.then(null, null, notifyCallback);
 });
 
 myModule.controller('controller2', function($scope, poller, myResource) {
     // Get existing poller and restart it.
     var myPoller = poller.get(myResource);
-    myPoller.promise.then(successCallback, errorCallback, notifyCallback);
+    myPoller.promise.then(null, null, notifyCallback);
 });
 
 myModule.controller('controller3', function($scope, poller, myResource) {
@@ -141,7 +140,7 @@ In order to automatically stop all pollers on navigating between views with mult
 var myModule = angular.module('myApp', ['emguo.poller']);
 
 myModule.config(function (pollerConfig) {
-    pollerConfig.stopOnStateChange = true; // If your app is using $stateProvider from ui-router.
-    pollerConfig.stopOnRouteChange = true; // If your app is using $routeProvider from ngRoute.
+    pollerConfig.stopOnStateChange = true; // If you use $stateProvider from ui-router.
+    pollerConfig.stopOnRouteChange = true; // If you use $routeProvider from ngRoute.
 });
 ```
