@@ -135,3 +135,13 @@ myModule.controller('controller3', function($scope, poller, myResource) {
     poller.get(myResource).stop();
 });
 ```
+
+In order to automatically stop all pollers on navigating between views with multiple controllers, you can use `pollerConfig`.
+```javascript
+var myModule = angular.module('myApp', ['emguo.poller']);
+
+myModule.config(function (pollerConfig) {
+    pollerConfig.stopOnStateChange = true; // If your app is using $stateProvider from ui-router.
+    pollerConfig.stopOnRouteChange = true; // If your app is using $routeProvider from ngRoute.
+});
+```

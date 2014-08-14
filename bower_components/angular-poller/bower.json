@@ -1,0 +1,32 @@
+{
+    "name": "angularpoller",
+    "main": "angular-poller.min.js",
+    "version": "0.2.4",
+    "description": "Poller service for AngularJS",
+    "homepage": "https://github.com/emmaguo/angular-poller.git",
+    "author": {
+        "name": "Emma Guo",
+        "email": "emmahongguo@gmail.com"
+    },
+    "ignore": [
+        "*",
+        "!angular-poller.js",
+        "!angular-poller.min.js",
+        "!README.md"
+    ],
+    "dependencies": {
+        "angular": "~1.2.14",
+        "angular-resource": "~1.2.14"
+    },
+    "devDependencies": {
+        "angular-mocks": "~1.2.14"
+    },
+    "keywords": [
+        "AngularJS",
+        "angular",
+        "angular-js",
+        "poller",
+        "poller-service"
+    ],
+    "license": "MIT"
+}
