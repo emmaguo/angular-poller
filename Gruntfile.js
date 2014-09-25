@@ -14,9 +14,14 @@ module.exports = function (grunt) {
             target: ['Gruntfile.js', 'angular-poller.js', 'test/*.js']
         },
         karma: {
-            unit: {
+            develop: {
+                configFile: 'karma.conf.js'
+            },
+            // Continuous integration mode: run tests once in PhantomJS browser.
+            continuous: {
                 configFile: 'karma.conf.js',
-                singleRun: true
+                singleRun: true,
+                browsers: ['PhantomJS']
             }
         },
         coveralls: {
@@ -49,6 +54,7 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('test', ['jshint', 'karma', 'coveralls']);
+    grunt.registerTask('develop', ['jshint', 'karma:develop']);
+    grunt.registerTask('test', ['jshint', 'karma:continuous', 'coveralls']);
     grunt.registerTask('default', ['test', 'ngmin', 'uglify']);
 };
