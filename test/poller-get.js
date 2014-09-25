@@ -93,6 +93,16 @@ describe('Poller registry:', function () {
                 expect(anotherPoller.smart).to.equal(false);
             });
 
+            it('should overwrite poller.catchError if it is re-defined.', function () {
+                anotherPoller = poller.get(myResource, {catchError: true});
+                expect(anotherPoller.catchError).to.equal(true);
+            });
+
+            it('should not modify catchError flag if it is not re-defined.', function () {
+                anotherPoller = poller.get(myResource);
+                expect(anotherPoller.catchError).to.equal(false);
+            });
+
             it('should start polling if it is currently stopped.', function () {
                 myPoller.stop();
                 expect(myPoller.interval).to.equal(undefined);

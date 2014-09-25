@@ -37,7 +37,8 @@ describe('Poller model:', function () {
             params: {
                 id: 123
             },
-            smart: true
+            smart: true,
+            catchError: true
         });
         poller2.promise.then(null, null, function (data) {
             result2 = data;
@@ -87,6 +88,14 @@ describe('Poller model:', function () {
         expect(poller2).to.have.property('smart').to.equal(true);
     });
 
+    it('should have default catchError flag set to false.', function () {
+        expect(poller1).to.have.property('catchError').to.equal(false);
+    });
+
+    it('should have catchError flag set to true if it is specified.', function () {
+        expect(poller2).to.have.property('catchError').to.equal(true);
+    });
+
     it('should maintain a copy of resource promise.', function () {
         expect(poller1).to.have.property('promise');
     });
@@ -102,7 +111,7 @@ describe('Poller model:', function () {
         expect(current - poller1.stopTimestamp).to.be.at.most(1);
     });
 
-    it('should ignore the response if request is sent before stop() is invoked', function () {
+    it('should ignore success response if request is sent before stop() is invoked', function () {
         poller2.stop();
         $httpBackend.expect('GET', '/users').respond([]);
         $interval.flush(5000); // Request at t = 5000 ms.
@@ -111,6 +120,18 @@ describe('Poller model:', function () {
         $httpBackend.flush(1); // Response is ignored because request is sent before poller1 is stopped.
 
         expect(result1.length).to.equal(2);
+    });
+
+    it('should ignore error response if request is sent before stop() is invoked', function () {
+        poller1.stop();
+        $httpBackend.expect('GET', '/user?id=123').respond(503, 'Service Unavailable', {}, 'Service Unavailable');
+        $interval.flush(6000); // Request at t = 6000 ms.
+        poller2.stop();
+        poller2.stopTimestamp = poller2.stopTimestamp + 100; // Poller2 is stopped at t = 6100 ms.
+        $httpBackend.flush(1); // Response is ignored because request is sent before poller2 is stopped.
+
+        expect(poller2.catchError).to.equal(true);
+        expect(result2.id).to.equal(123);
     });
 
     it('should restart currently running poller on invoking restart().', function () {
@@ -164,7 +185,7 @@ describe('Poller model:', function () {
         expect(result1.length).to.equal(1);
     });
 
-    it('should only send new request after the previous one is resolved if smart flag is set to true', function () {
+    it('should only send new request if the previous one is resolved if smart flag is set to true', function () {
         poller1.stop();
         $httpBackend.expect('GET', '/user?id=123').respond(
             {id: 123, name: 'Alice', group: 1}
@@ -173,5 +194,32 @@ describe('Poller model:', function () {
         $httpBackend.flush(1);
 
         expect(result2.group).to.equal(1);
+    });
+
+    it('should only get notified of success responses if catchError flag is set to false.', function () {
+        var previousResult = result1;
+        poller2.stop();
+        $httpBackend.expect('GET', '/users').respond(503, 'Service Unavailable', {}, 'Service Unavailable');
+        $interval.flush(5100); // 5000 + 100
+        $httpBackend.flush(1);
+
+        expect(result1).to.equal(previousResult);
+    });
+
+    it('should get notified of both success and error responses if catchError flag is set to true.', function () {
+        poller1.stop();
+        $httpBackend.expect('GET', '/user?id=123').respond(503, 'Service Unavailable', {}, 'Service Unavailable');
+        $interval.flush(6100); // 6000 + 100
+        $httpBackend.flush(1);
+
+        expect(result2.status).to.equal(503);
+        expect(result2.data).to.equal('Service Unavailable');
+        expect(result2.statusText).to.equal('Service Unavailable');
+
+        $httpBackend.expect('GET', '/user?id=123').respond({id: 123456, name: 'Alice'});
+        $interval.flush(6100); // 6000 + 100
+        $httpBackend.flush(1);
+
+        expect(result2.id).to.equal(123456);
     });
 });
