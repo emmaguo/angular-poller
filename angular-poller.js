@@ -22,7 +22,8 @@
  *              verb: 'greet',
  *              salutation: 'Hello'
  *          },
- *          smart: true
+ *          smart: true,
+ *          catchError: true
  *      });
  *      myPoller.promise.then(successCallback, errorCallback, notifyCallback);
  */
@@ -64,7 +65,8 @@
                     action: 'query',
                     delay: 5000,
                     params: {},
-                    smart: false
+                    smart: false,
+                    catchError: false
                 },
 
                 /**
@@ -73,7 +75,8 @@
                  *  - action
                  *  - delay
                  *  - params
-                 *  - smart (if set to true then only send new request after the previous one is resolved)
+                 *  - smart (indicates whether poller should only send new request if the previous one is resolved)
+                 *  - catchError (indicates whether poller should get notified of error responses)
                  *  - promise
                  *  - interval
                  *
@@ -108,17 +111,17 @@
             angular.extend(Poller.prototype, {
 
                 /**
-                 * Set poller action, delay, params and smart flag.
+                 * Set poller action, delay, params, smart and catchError flags.
                  *
                  * If options.params is defined, then set poller params to options.params,
                  * else if poller.params is undefined, then set it to defaults.params,
-                 * else do nothing. The same goes for poller.action, poller.delay and poller.smart.
+                 * else do nothing. The same goes for poller.action, poller.delay, poller.smart and poller.catchError.
                  *
                  * @param options
                  */
                 set: function (options) {
 
-                    angular.forEach(['action', 'delay', 'params', 'smart'], function (prop) {
+                    angular.forEach(['action', 'delay', 'params', 'smart', 'catchError'], function (prop) {
                         if (options && options[prop]) {
                             this[prop] = options[prop];
                         } else if (!this[prop]) {
@@ -137,6 +140,7 @@
                         delay = this.delay,
                         params = this.params,
                         smart = this.smart,
+                        catchError = this.catchError,
                         self = this,
                         current,
                         timestamp;
@@ -147,15 +151,24 @@
 
                     function tick() {
 
-                        // If smart flag is true, then only send new request after the previous one is resolved.
+                        // If smart flag is true, then only send new request if the previous one is resolved.
                         if (!smart || !angular.isDefined(current) || current.$resolved) {
 
                             timestamp = new Date();
-                            current = resource[action](params, function (data) {
+                            current = resource[action](params);
 
-                                // Ignore the response if request is sent before poller is stopped.
-                                if (!angular.isDefined(self.stopTimestamp) || timestamp >= self.stopTimestamp) {
-                                    self.deferred.notify(data);
+                            current.$promise.then(function (result) {
+
+                                // Ignore success response if request is sent before poller is stopped.
+                                if (angular.isUndefined(self.stopTimestamp) || timestamp >= self.stopTimestamp) {
+                                    self.deferred.notify(result);
+                                }
+
+                            }, function (error) {
+
+                                // Send error response if catchError flag is true and request is sent before poller is stopped
+                                if (catchError && (angular.isUndefined(self.stopTimestamp) || timestamp >= self.stopTimestamp)) {
+                                    self.deferred.notify(error);
                                 }
                             });
                         }
