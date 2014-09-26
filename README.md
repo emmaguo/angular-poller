@@ -33,9 +33,10 @@ myModule.controller('myController', function($scope, $resource, poller) {
     // Get poller. This also starts/restarts poller.
     var myPoller = poller.get(myResource);
 
-    // Update view. Poller promise only gets notified if the request is
-    // successful, so you should use notifyCallback.
-    myPoller.promise.then(null, null, notifyCallback);
+    // Update view. Since a promise can only be resolved or rejected once but we want
+    // to keep track of all requests, poller service uses the notifyCallback. By default
+    // poller only gets notified of success responses.
+    myPoller.promise.then(null, null, callback);
 
     // Stop poller.
     myPoller.stop();
@@ -77,8 +78,53 @@ myModule.controller('myController', function($scope, $resource, poller) {
         smart: true
     });
 
-    myPoller.promise.then(null, null, notifyCallback);
+    myPoller.promise.then(null, null, callback);
 });
+```
+
+### Error Handling
+1. One way to capture error responses is to use the `catchError` option. It indicates whether poller should get notified of error responses.
+```javascript
+var myPoller = poller.get(myResource, {
+    catchError: true
+});
+
+myPoller.promise.then(null, null, function (result) {
+
+    // If catchError is set to true, this notifyCallback can contain either
+    // a success or an error response.
+    if (result.$resolved) {
+
+        // Success handler
+        $scope.bla = result.bla;
+
+    } else {
+
+        // Error handler: (data, status, headers, config)
+        if (result.status === 503) {
+            // Stop poller or provide visual feedback to the user etc
+            poller.stopAll();
+        }
+    }
+});
+```
+
+2. Alternatively you can use AngularJS `interceptors` for global error handling like so:
+```javascript
+angular.module('myApp', ['emguo.poller'])
+    .config(function ($httpProvider) {
+        $httpProvider.interceptors.push(function ($q, poller) {
+            return {
+                'responseError': function (rejection) {
+                    if (rejection.status === 503) {
+                        // Stop poller or provide visual feedback to the user etc
+                        poller.stopAll();
+                    }
+                    return $q.reject(rejection);
+                }
+            };
+        });
+    });
 ```
 
 ### Multiple Resources
@@ -94,8 +140,8 @@ myModule.controller('myController', function($scope, $resource, poller) {
         poller1 = poller.get(resource1),
         poller2 = poller.get(resource2);
 
-    poller1.promise.then(null, null, notifyCallback);
-    poller2.promise.then(null, null, notifyCallback);
+    poller1.promise.then(null, null, callback);
+    poller2.promise.then(null, null, callback);
 
     // Stop all pollers.
     poller.stopAll();
@@ -121,13 +167,13 @@ myModule.factory('myResource', function ($resource) {
 myModule.controller('controller1', function($scope, poller, myResource) {
     // Register and start poller.
     var myPoller = poller.get(myResource);
-    myPoller.promise.then(null, null, notifyCallback);
+    myPoller.promise.then(null, null, callback);
 });
 
 myModule.controller('controller2', function($scope, poller, myResource) {
     // Get existing poller and restart it.
     var myPoller = poller.get(myResource);
-    myPoller.promise.then(null, null, notifyCallback);
+    myPoller.promise.then(null, null, callback);
 });
 
 myModule.controller('controller3', function($scope, poller, myResource) {

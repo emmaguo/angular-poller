@@ -12,7 +12,7 @@
  * @example
  * Simple example:
  *      var myPoller = poller.get(myResource);
- *      myPoller.promise.then(successCallback, errorCallback, notifyCallback);
+ *      myPoller.promise.then(null, null, callback);
  *
  * Advanced example:
  *      var myPoller = poller.get(myResource, {
@@ -25,7 +25,7 @@
  *          smart: true,
  *          catchError: true
  *      });
- *      myPoller.promise.then(successCallback, errorCallback, notifyCallback);
+ *      myPoller.promise.then(null, null, callback);
  */
 
 (function (window, angular, undefined) {
