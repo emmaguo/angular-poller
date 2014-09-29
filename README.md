@@ -83,7 +83,7 @@ myModule.controller('myController', function($scope, $resource, poller) {
 ```
 
 ### Error Handling
-1. One way to capture error responses is to use the `catchError` option. It indicates whether poller should get notified of error responses.
+One way to capture error responses is to use the `catchError` option. It indicates whether poller should get notified of error responses.
 ```javascript
 var myPoller = poller.get(myResource, {
     catchError: true
@@ -109,7 +109,7 @@ myPoller.promise.then(null, null, function (result) {
 });
 ```
 
-2. Alternatively you can use AngularJS `interceptors` for global error handling like so:
+Alternatively you can use AngularJS `interceptors` for global error handling like so:
 ```javascript
 angular.module('myApp', ['emguo.poller'])
     .config(function ($httpProvider) {
