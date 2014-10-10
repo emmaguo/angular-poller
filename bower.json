@@ -15,18 +15,18 @@
         "!README.md"
     ],
     "dependencies": {
-        "angular": "~1.2.14",
-        "angular-resource": "~1.2.14"
+        "angular": "~1.2.14"
     },
     "devDependencies": {
+        "angular-resource": "~1.2.14",
         "angular-mocks": "~1.2.14"
     },
     "keywords": [
         "AngularJS",
         "angular",
-        "angular-js",
         "poller",
-        "poller-service"
+        "poller-service",
+        "angular-poller"
     ],
     "license": "MIT"
 }
