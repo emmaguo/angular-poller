@@ -11,17 +11,19 @@
  *
  * @example
  * Simple example:
- *      var myPoller = poller.get(myResource);
+ *      var myPoller = poller.get(target);
  *      myPoller.promise.then(null, null, callback);
  *
  * Advanced example:
- *      var myPoller = poller.get(myResource, {
+ *      var myPoller = poller.get(target, {
  *          action: 'get',
+ *          argumentsArray: [
+ *              {
+ *                  verb: 'greet',
+ *                  salutation: 'Hello'
+ *              }
+ *          ],
  *          delay: 6000,
- *          params: {
- *              verb: 'greet',
- *              salutation: 'Hello'
- *          },
  *          smart: true,
  *          catchError: true
  *      });
@@ -57,50 +59,50 @@
             }
         })
 
-        .factory('poller', function ($interval, $q) {
+        .factory('poller', function ($interval, $q, $http) {
 
             var pollers = [], // Poller registry
 
                 defaults = {
                     action: 'query',
+                    argumentsArray: [],
                     delay: 5000,
-                    params: {},
                     smart: false,
                     catchError: false
                 },
 
                 /**
                  * Poller model:
-                 *  - resource (http://docs.angularjs.org/api/ngResource.$resource)
+                 *  - target (can be $resource object, or Restangular object, or $http url)
                  *  - action
+                 *  - argumentsArray
                  *  - delay
-                 *  - params
                  *  - smart (indicates whether poller should only send new request if the previous one is resolved)
                  *  - catchError (indicates whether poller should get notified of error responses)
                  *  - promise
                  *  - interval
                  *
-                 * @param resource
+                 * @param target
                  * @param options
                  */
-                Poller = function (resource, options) {
+                Poller = function (target, options) {
 
-                    this.resource = resource;
+                    this.target = target;
                     this.set(options);
                 },
 
                 /**
-                 * Find poller by resource in poller registry.
+                 * Find poller by target in poller registry.
                  *
-                 * @param resource
+                 * @param target
                  * @returns {object}
                  */
-                findPoller = function (resource) {
+                findPoller = function (target) {
 
                     var poller = null;
 
                     angular.forEach(pollers, function (item) {
-                        if (angular.equals(item.resource, resource)) {
+                        if (angular.equals(item.target, target)) {
                             poller = item;
                         }
                     });
@@ -111,17 +113,17 @@
             angular.extend(Poller.prototype, {
 
                 /**
-                 * Set poller action, delay, params, smart and catchError flags.
+                 * Set poller action, argumentsArray, delay, smart and catchError flags.
                  *
-                 * If options.params is defined, then set poller params to options.params,
-                 * else if poller.params is undefined, then set it to defaults.params,
-                 * else do nothing. The same goes for poller.action, poller.delay, poller.smart and poller.catchError.
+                 * If options.action is defined, then set poller action to options.action,
+                 * else if poller.action is undefined, then set it to defaults.action,
+                 * else do nothing. The same goes for poller.argumentsArray, poller.delay, poller.smart and poller.catchError.
                  *
                  * @param options
                  */
                 set: function (options) {
 
-                    angular.forEach(['action', 'delay', 'params', 'smart', 'catchError'], function (prop) {
+                    angular.forEach(['action', 'argumentsArray', 'delay', 'smart', 'catchError'], function (prop) {
                         if (options && options[prop]) {
                             this[prop] = options[prop];
                         } else if (!this[prop]) {
@@ -135,18 +137,34 @@
                  */
                 start: function () {
 
-                    var resource = this.resource,
+                    var target = this.target,
                         action = this.action,
+                        argumentsArray = this.argumentsArray.slice(0),
                         delay = this.delay,
-                        params = this.params,
                         smart = this.smart,
                         catchError = this.catchError,
                         self = this,
                         current,
                         timestamp;
 
-                    if (!this.deferred) {
-                        this.deferred = $q.defer();
+                    this.deferred = this.deferred || $q.defer();
+
+                    /**
+                     * $resource: typeof target === 'function'
+                     * Restangular: typeof target === 'object'
+                     * $http: typeof target === 'string'
+                     */
+                    if (typeof target === 'string') {
+
+                        /**
+                         * Update argumentsArray and target for target[action].apply(self, argumentsArray).
+                         *
+                         * @example
+                         * $http.get(url, [config])
+                         * $http.post(url, data, [config])
+                         */
+                        argumentsArray.unshift(target);
+                        target = $http;
                     }
 
                     function tick() {
@@ -155,9 +173,17 @@
                         if (!smart || !angular.isDefined(current) || current.$resolved) {
 
                             timestamp = new Date();
-                            current = resource[action](params);
+                            current = target[action].apply(self, argumentsArray);
+                            current.$resolved = false;
 
-                            current.$promise.then(function (result) {
+                            /**
+                             * $resource: current.$promise.then
+                             * Restangular: current.then
+                             * $http: current.then
+                             */
+                            (current.$promise || current).then(function (result) {
+
+                                current.$resolved = true;
 
                                 // Ignore success response if request is sent before poller is stopped.
                                 if (angular.isUndefined(self.stopTimestamp) || timestamp >= self.stopTimestamp) {
@@ -165,6 +191,8 @@
                                 }
 
                             }, function (error) {
+
+                                current.$resolved = true;
 
                                 // Send error response if catchError flag is true and request is sent before poller is stopped
                                 if (catchError && (angular.isUndefined(self.stopTimestamp) || timestamp >= self.stopTimestamp)) {
@@ -176,7 +204,6 @@
 
                     tick();
                     this.interval = $interval(tick, delay);
-
                     this.promise = this.deferred.promise;
                 },
 
@@ -207,17 +234,17 @@
                  * Return a singleton instance of a poller. If poller does not exist, then register and
                  * start it. Otherwise return it and restart it if necessary.
                  *
-                 * @param resource
+                 * @param target
                  * @param options
                  * @returns {object}
                  */
-                get: function (resource, options) {
+                get: function (target, options) {
 
-                    var poller = findPoller(resource);
+                    var poller = findPoller(target);
 
                     if (!poller) {
 
-                        poller = new Poller(resource, options);
+                        poller = new Poller(target, options);
                         pollers.push(poller);
                         poller.start();
 
