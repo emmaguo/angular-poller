@@ -16,7 +16,7 @@
  *
  * Advanced example:
  *      var myPoller = poller.get(target, {
- *          action: 'get',
+ *          action: 'query',
  *          argumentsArray: [
  *              {
  *                  verb: 'greet',
@@ -64,7 +64,7 @@
             var pollers = [], // Poller registry
 
                 defaults = {
-                    action: 'query',
+                    action: 'get',
                     argumentsArray: [],
                     delay: 5000,
                     smart: false,
