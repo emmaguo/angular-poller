@@ -17,8 +17,10 @@ module.exports = function (config) {
             'bower_components/angular/angular.js',
             'bower_components/angular-mocks/angular-mocks.js',
             'bower_components/angular-resource/angular-resource.js',
+            'bower_components/lodash/dist/lodash.js',
+            'bower_components/restangular/src/restangular.js',
             'angular-poller.js',
-            'test/*.js'
+            'test/angular-poller-spec.js'
         ],
 
         // list of files to exclude

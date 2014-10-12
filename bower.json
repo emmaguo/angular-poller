@@ -19,7 +19,8 @@
     },
     "devDependencies": {
         "angular-resource": "~1.2.14",
-        "angular-mocks": "~1.2.14"
+        "angular-mocks": "~1.2.14",
+        "restangular": "~1.4.0"
     },
     "keywords": [
         "AngularJS",
