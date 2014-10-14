@@ -18,6 +18,7 @@ Demo site: http://emmaguo.github.io/angular-poller/
 	- [Multiple controllers](#multiple-controllers)
 	- [Force poller to only send new request if the previous one is resolved](#force-poller-to-only-send-new-request-if-the-previous-one-is-resolved)
     - [Automatically stop all pollers when navigating between views](#automatically-stop-all-pollers-when-navigating-between-views)
+- [Supported Angular versions](#supported-angular-versions)
 
 ## Install
 
@@ -277,3 +278,7 @@ myModule.config(function (pollerConfig) {
     pollerConfig.stopOnRouteChange = true; // If you use $routeProvider from ngRoute.
 });
 ```
+
+## Supported Angular versions
+
+Angular Poller supports Angular 1.2.0 - 1.3.0. [AngularJS 1.3.0](http://angularjs.blogspot.com/2014/10/angularjs-130-superluminal-nudge.html) was released on Oct 13th 2014.
