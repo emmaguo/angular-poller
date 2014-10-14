@@ -1,7 +1,7 @@
 {
   "name": "angularpoller",
   "main": "angular-poller.min.js",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Poller service for AngularJS",
   "homepage": "https://github.com/emmaguo/angular-poller.git",
   "author": {
@@ -15,28 +15,24 @@
     "!README.md"
   ],
   "dependencies": {
-    "angular": "~1.2.14",
-    "angular-resource": "~1.2.14"
-  },
-  "devDependencies": {
-    "angular-mocks": "~1.2.14"
+    "angular": "1.2.0 - 1.3.0"
   },
   "keywords": [
     "AngularJS",
     "angular",
-    "angular-js",
     "poller",
-    "poller-service"
+    "poller-service",
+    "angular-poller"
   ],
   "license": "MIT",
-  "_release": "0.2.4",
+  "_release": "0.3.0",
   "_resolution": {
     "type": "version",
-    "tag": "v0.2.4",
-    "commit": "3cb44e619cd87850fdda718dce2ff606809bb8b2"
+    "tag": "v0.3.0",
+    "commit": "9897ee568323d481c21b77b7e087e5945485dee9"
   },
   "_source": "git://github.com/emmaguo/angular-poller.git",
-  "_target": "~0.2.4",
+  "_target": "~0.3.0",
   "_originalSource": "angular-poller",
   "_direct": true
 }
