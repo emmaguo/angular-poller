@@ -225,7 +225,6 @@ describe('emguo.poller', function () {
 
             expect(result2.status).to.equal(503);
             expect(result2.data).to.equal('Service Unavailable');
-            expect(result2.statusText).to.equal('Service Unavailable');
 
             $httpBackend.expect('GET', '/users?group=1').respond([
                 {id: 1, name: 'Alice'},
