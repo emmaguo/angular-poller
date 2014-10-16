@@ -16,7 +16,7 @@ Demo site: http://emmaguo.github.io/angular-poller/
 	- [Error handling](#error-handling)
 	- [Multiple pollers](#multiple-pollers)
 	- [Multiple controllers](#multiple-controllers)
-	- [Force poller to only send new request if the previous one is resolved](#force-poller-to-only-send-new-request-if-the-previous-one-is-resolved)
+	- [Only send new request if the previous one is resolved](#only-send-new-request-if-the-previous-one-is-resolved)
     - [Automatically stop all pollers when navigating between views](#automatically-stop-all-pollers-when-navigating-between-views)
 - [Supported Angular versions](#supported-angular-versions)
 - [License](#license)
@@ -253,7 +253,7 @@ myModule.controller('controller3', function($scope, poller, myTarget) {
 });
 ```
 
-### Force poller to only send new request if the previous one is resolved
+### Only send new request if the previous one is resolved
 Use the `smart` option to make sure poller only sends new request after the previous one is resolved. It is set to `false` by default.
 ```javascript
 var myPoller = poller.get(myTarget, {
