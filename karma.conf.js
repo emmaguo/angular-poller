@@ -64,7 +64,8 @@ module.exports = function (config) {
 
         coverageReporter: {
             type: 'lcov',
-            dir: 'coverage/'
+            dir: 'coverage/',
+            subdir: 'report'
         },
 
         preprocessors: {

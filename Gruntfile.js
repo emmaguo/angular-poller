@@ -17,19 +17,14 @@ module.exports = function (grunt) {
             develop: {
                 configFile: 'karma.conf.js'
             },
-            // Continuous integration mode: run tests once in PhantomJS browser.
             continuous: {
                 configFile: 'karma.conf.js',
-                singleRun: true,
-                browsers: ['PhantomJS']
+                singleRun: true
             }
         },
         coveralls: {
             options: {
-                debug: true,
-                dryRun: true,
-                force: true,
-                coverage_dir: 'coverage'
+                src: 'coverage/report/lcov.info'
             }
         },
         ngmin: {
