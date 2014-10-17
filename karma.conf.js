@@ -14,11 +14,11 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.js',
-            'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular-mocks.js',
-            'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular-resource.js',
-            'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js',
-            'https://cdnjs.cloudflare.com/ajax/libs/restangular/1.4.0/restangular.js',
+            'bower_components/angular/angular.js',
+            'bower_components/angular-resource/angular-resource.js',
+            'bower_components/angular-mocks/angular-mocks.js',
+            'bower_components/lodash/dist/lodash.js',
+            'bower_components/restangular/dist/restangular.js',
             'angular-poller.js',
             'test/angular-poller-spec.js'
         ],
