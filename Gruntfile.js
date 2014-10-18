@@ -24,18 +24,18 @@ module.exports = function (grunt) {
             }
         },
         coveralls: {
+            options: {
+                force: true
+            },
             target: {
                 src: 'coverage/report/lcov.info'
             }
         },
-        ngmin: {
-            factory: {
-                files: [
-                    {
-                        src: 'angular-poller.js',
-                        dest: 'angular-poller.min.js'
-                    }
-                ]
+        ngAnnotate: {
+            target: {
+                files: {
+                    'angular-poller.min.js': 'angular-poller.js'
+                }
             }
         },
         uglify: {
@@ -52,5 +52,5 @@ module.exports = function (grunt) {
 
     grunt.registerTask('develop', ['jshint', 'karma:develop']);
     grunt.registerTask('test', ['jshint', 'karma:continuous', 'coveralls']);
-    grunt.registerTask('default', ['test', 'ngmin', 'uglify']);
+    grunt.registerTask('default', ['test', 'ngAnnotate', 'uglify']);
 };
