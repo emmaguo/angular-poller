@@ -36,6 +36,11 @@ Add a `<script>` to your `index.html`:
 <script src="/bower_components/angular-poller/angular-poller.js"></script>
 ```
 
+Or use [cdnjs](https://cdnjs.com/libraries/angular-poller) files:
+```html
+<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.3.0/angular-poller.js"></script>
+```
+
 ## Quick configuration
 ```javascript
 // Inject angular poller service.
