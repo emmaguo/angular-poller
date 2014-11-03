@@ -38,7 +38,7 @@ Add a `<script>` to your `index.html`:
 
 Or use [cdnjs](https://cdnjs.com/libraries/angular-poller) files:
 ```html
-<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.3.0/angular-poller.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.3.1/angular-poller.js"></script>
 ```
 
 ## Quick configuration
@@ -288,7 +288,7 @@ myModule.config(function (pollerConfig) {
 
 ## Supported Angular versions
 
-Angular Poller supports Angular 1.2.0 - 1.3.0. [AngularJS 1.3.0](http://angularjs.blogspot.com/2014/10/angularjs-130-superluminal-nudge.html) was released on Oct 13th 2014.
+Angular Poller supports Angular 1.2.0 - 1.3.x.
 
 ## License
 
