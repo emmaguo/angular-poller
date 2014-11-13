@@ -18,7 +18,9 @@ Demo site: http://emmaguo.github.io/angular-poller/
 	- [Multiple pollers](#multiple-pollers)
 	- [Multiple controllers](#multiple-controllers)
 	- [Only send new request if the previous one is resolved](#only-send-new-request-if-the-previous-one-is-resolved)
+	- [Always create new poller on calling poller.get](#always-create-new-poller-on-calling-poller-get)
     - [Automatically stop all pollers when navigating between views](#automatically-stop-all-pollers-when-navigating-between-views)
+    - [Automatically reset all pollers when navigating between views](#automatically-reset-all-pollers-when-navigating-between-views)
 - [Supported Angular versions](#supported-angular-versions)
 - [License](#license)
 
@@ -275,6 +277,22 @@ var myPoller = poller.get(myTarget, {
 });
 ```
 
+### Always create new poller on calling poller.get
+By default `poller.get(target, ...)` looks for any existing poller by `target` in poller registry. If found, it overwrites
+existing poller with new parameters such as `action`, `delay`, `argumentsArray` etc if specified, and then restarts the poller.
+If not found, it creates and starts a new poller. It means you will never have two pollers running against the same target.
+
+But if you do want to have more than one poller running against the same target, you can force poller to always create new
+poller on calling `poller.get` like so:
+
+```javascript
+var myModule = angular.module('myApp', ['emguo.poller']);
+
+myModule.config(function (pollerConfig) {
+    pollerConfig.neverOverwrite = true;
+});
+```
+
 ### Automatically stop all pollers when navigating between views
 In order to automatically stop all pollers when navigating between views with multiple controllers, you can use `pollerConfig`.
 ```javascript
@@ -283,6 +301,18 @@ var myModule = angular.module('myApp', ['emguo.poller']);
 myModule.config(function (pollerConfig) {
     pollerConfig.stopOnStateChange = true; // If you use $stateProvider from ui-router.
     pollerConfig.stopOnRouteChange = true; // If you use $routeProvider from ngRoute.
+});
+```
+
+### Automatically reset all pollers when navigating between views
+You can also use `pollerConfig` to automatically reset all pollers when navigating between views with multiple controllers.
+It empties poller registry in addition to stopping all pollers. It means `poller.get` will always create a new poller.
+```javascript
+var myModule = angular.module('myApp', ['emguo.poller']);
+
+myModule.config(function (pollerConfig) {
+    pollerConfig.resetOnStateChange = true; // If you use $stateProvider from ui-router.
+    pollerConfig.resetOnRouteChange = true; // If you use $routeProvider from ngRoute.
 });
 ```
 

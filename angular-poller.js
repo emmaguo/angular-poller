@@ -38,28 +38,43 @@
 
         .constant('pollerConfig', {
             stopOnRouteChange: false,
-            stopOnStateChange: false
+            stopOnStateChange: false,
+            resetOnRouteChange: false,
+            resetOnStateChange: false,
+            neverOverwrite: false
         })
 
         .run(function ($rootScope, poller, pollerConfig) {
 
             /**
-             * Automatically stop all pollers before route change ($routeProvider) or state change ($stateProvider).
+             * Automatically stop or reset all pollers before route change ($routeProvider) or state change ($stateProvider).
              */
             if (pollerConfig.stopOnRouteChange) {
-
                 $rootScope.$on('$routeChangeStart', function () {
                     poller.stopAll();
                 });
-            } else if (pollerConfig.stopOnStateChange) {
+            }
 
+            if (pollerConfig.stopOnStateChange) {
                 $rootScope.$on('$stateChangeStart', function () {
                     poller.stopAll();
                 });
             }
+
+            if (pollerConfig.resetOnRouteChange) {
+                $rootScope.$on('$routeChangeStart', function () {
+                    poller.reset();
+                });
+            }
+
+            if (pollerConfig.resetOnStateChange) {
+                $rootScope.$on('$stateChangeStart', function () {
+                    poller.reset();
+                });
+            }
         })
 
-        .factory('poller', function ($interval, $q, $http) {
+        .factory('poller', function ($interval, $q, $http, pollerConfig) {
 
             var pollers = [], // Poller registry
 
@@ -92,7 +107,8 @@
                 },
 
                 /**
-                 * Find poller by target in poller registry.
+                 * Find poller by target in poller registry if pollerConfig.neverOverwrite is set to false (default).
+                 * Otherwise return null to prevent overwriting existing pollers.
                  *
                  * @param target
                  * @returns {object}
@@ -101,11 +117,13 @@
 
                     var poller = null;
 
-                    angular.forEach(pollers, function (item) {
-                        if (angular.equals(item.target, target)) {
-                            poller = item;
-                        }
-                    });
+                    if (!pollerConfig.neverOverwrite) {
+                        angular.forEach(pollers, function (item) {
+                            if (angular.equals(item.target, target)) {
+                                poller = item;
+                            }
+                        });
+                    }
 
                     return poller;
                 };

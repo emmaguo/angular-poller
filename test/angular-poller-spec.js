@@ -535,17 +535,16 @@ describe('emguo.poller', function () {
 
 describe('emguo.poller PollerConfig', function () {
 
-    var $rootScope, poller, spy;
+    var $rootScope, $resource, poller, spy;
 
     beforeEach(function () {
-        module('emguo.poller');
+        module('emguo.poller', 'ngResource');
     });
 
     it('should stop all pollers on $routeChangeStart if pollerConfig.stopOnRouteChange is true.', function () {
         module(function ($provide) {
             $provide.constant('pollerConfig', {
-                stopOnRouteChange: true,
-                stopOnStateChange: false
+                stopOnRouteChange: true
             });
         });
 
@@ -562,7 +561,6 @@ describe('emguo.poller PollerConfig', function () {
     it('should stop all pollers on $stateChangeStart if pollerConfig.stopOnStateChange is true.', function () {
         module(function ($provide) {
             $provide.constant('pollerConfig', {
-                stopOnRouteChange: false,
                 stopOnStateChange: true
             });
         });
@@ -575,5 +573,70 @@ describe('emguo.poller PollerConfig', function () {
         spy = sinon.spy(poller, 'stopAll');
         $rootScope.$broadcast('$stateChangeStart');
         expect(spy).to.have.callCount(1);
+    });
+
+    it('should reset all pollers on $routeChangeStart if pollerConfig.resetOnRouteChange is true.', function () {
+        module(function ($provide) {
+            $provide.constant('pollerConfig', {
+                resetOnRouteChange: true
+            });
+        });
+
+        inject(function (_$rootScope_, _poller_) {
+            $rootScope = _$rootScope_;
+            poller = _poller_;
+        });
+
+        spy = sinon.spy(poller, 'reset');
+        $rootScope.$broadcast('$routeChangeStart');
+        expect(spy).to.have.callCount(1);
+    });
+
+    it('should reset all pollers on $stateChangeStart if pollerConfig.resetOnStateChange is true.', function () {
+        module(function ($provide) {
+            $provide.constant('pollerConfig', {
+                resetOnStateChange: true
+            });
+        });
+
+        inject(function (_$rootScope_, _poller_) {
+            $rootScope = _$rootScope_;
+            poller = _poller_;
+        });
+
+        spy = sinon.spy(poller, 'reset');
+        $rootScope.$broadcast('$stateChangeStart');
+        expect(spy).to.have.callCount(1);
+    });
+
+    it('should always create new poller if pollerConfig.neverOverwrite is true.', function () {
+        module(function ($provide) {
+            $provide.constant('pollerConfig', {
+                neverOverwrite: true
+            });
+        });
+
+        inject(function (_$rootScope_, _$resource_, _poller_) {
+            $rootScope = _$rootScope_;
+            $resource = _$resource_;
+            poller = _poller_;
+        });
+
+        var target = $resource('/users');
+        var myPoller = poller.get(target, {
+            action: 'query',
+            argumentsArray: [
+                {
+                    group: 1
+                }
+            ],
+            delay: 8000
+        });
+        var anotherPoller = poller.get(target);
+
+        expect(anotherPoller).to.not.equal(myPoller);
+        expect(anotherPoller.action).to.equal('get');
+        expect(anotherPoller.argumentsArray.length).to.equal(0);
+        expect(anotherPoller.delay).to.equal(5000);
     });
 });
