@@ -18,7 +18,7 @@ Demo site: http://emmaguo.github.io/angular-poller/
 	- [Multiple pollers](#multiple-pollers)
 	- [Multiple controllers](#multiple-controllers)
 	- [Only send new request if the previous one is resolved](#only-send-new-request-if-the-previous-one-is-resolved)
-	- [Always create new poller on calling poller.get](#always-create-new-poller-on-calling-poller-get)
+	- [Always create new poller on calling poller.get](#always-create-new-poller-on-calling-pollerget)
     - [Automatically stop all pollers when navigating between views](#automatically-stop-all-pollers-when-navigating-between-views)
     - [Automatically reset all pollers when navigating between views](#automatically-reset-all-pollers-when-navigating-between-views)
 - [Supported Angular versions](#supported-angular-versions)
@@ -277,7 +277,7 @@ var myPoller = poller.get(myTarget, {
 });
 ```
 
-### Always create new poller on calling poller.get
+### Always create new poller on calling `poller.get`
 By default `poller.get(target, ...)` looks for any existing poller by `target` in poller registry. If found, it overwrites
 existing poller with new parameters such as `action`, `delay`, `argumentsArray` etc if specified, and then restarts the poller.
 If not found, it creates and starts a new poller. It means you will never have two pollers running against the same target.
