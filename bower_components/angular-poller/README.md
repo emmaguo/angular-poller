@@ -1,5 +1,6 @@
 # Angular Poller
 [![Build Status](https://travis-ci.org/emmaguo/angular-poller.svg)](https://travis-ci.org/emmaguo/angular-poller)
+[![Coverage Status](https://img.shields.io/coveralls/emmaguo/angular-poller.svg)](https://coveralls.io/r/emmaguo/angular-poller?branch=master)
 [![devDependency Status](https://david-dm.org/emmaguo/angular-poller/dev-status.svg?theme=shields.io)](https://david-dm.org/emmaguo/angular-poller#info=devDependencies)
 
 Lightweight [AngularJS](http://angularjs.org/) poller service which can be easily injected into controllers. It uses a timer and sends requests every few seconds to keep the client synced with the server. Angular Poller supports `$resource`, `$http` and `Restangular`.
@@ -16,8 +17,10 @@ Demo site: http://emmaguo.github.io/angular-poller/
 	- [Error handling](#error-handling)
 	- [Multiple pollers](#multiple-pollers)
 	- [Multiple controllers](#multiple-controllers)
-	- [Force poller to only send new request if the previous one is resolved](#force-poller-to-only-send-new-request-if-the-previous-one-is-resolved)
+	- [Only send new request if the previous one is resolved](#only-send-new-request-if-the-previous-one-is-resolved)
+	- [Always create new poller on calling poller.get](#always-create-new-poller-on-calling-pollerget)
     - [Automatically stop all pollers when navigating between views](#automatically-stop-all-pollers-when-navigating-between-views)
+    - [Automatically reset all pollers when navigating between views](#automatically-reset-all-pollers-when-navigating-between-views)
 - [Supported Angular versions](#supported-angular-versions)
 - [License](#license)
 
@@ -33,6 +36,11 @@ Add a `<script>` to your `index.html`:
 
 ```html
 <script src="/bower_components/angular-poller/angular-poller.js"></script>
+```
+
+Or use [cdnjs](https://cdnjs.com/libraries/angular-poller) files:
+```html
+<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.3.1/angular-poller.js"></script>
 ```
 
 ## Quick configuration
@@ -253,7 +261,7 @@ myModule.controller('controller3', function($scope, poller, myTarget) {
 });
 ```
 
-### Force poller to only send new request if the previous one is resolved
+### Only send new request if the previous one is resolved
 Use the `smart` option to make sure poller only sends new request after the previous one is resolved. It is set to `false` by default.
 ```javascript
 var myPoller = poller.get(myTarget, {
@@ -269,6 +277,22 @@ var myPoller = poller.get(myTarget, {
 });
 ```
 
+### Always create new poller on calling `poller.get`
+By default `poller.get(target, ...)` looks for any existing poller by `target` in poller registry. If found, it overwrites
+existing poller with new parameters such as `action`, `delay`, `argumentsArray` etc if specified, and then restarts the poller.
+If not found, it creates and starts a new poller. It means you will never have two pollers running against the same target.
+
+But if you do want to have more than one poller running against the same target, you can force poller to always create new
+poller on calling `poller.get` like so:
+
+```javascript
+var myModule = angular.module('myApp', ['emguo.poller']);
+
+myModule.config(function (pollerConfig) {
+    pollerConfig.neverOverwrite = true;
+});
+```
+
 ### Automatically stop all pollers when navigating between views
 In order to automatically stop all pollers when navigating between views with multiple controllers, you can use `pollerConfig`.
 ```javascript
@@ -280,9 +304,21 @@ myModule.config(function (pollerConfig) {
 });
 ```
 
+### Automatically reset all pollers when navigating between views
+You can also use `pollerConfig` to automatically reset all pollers when navigating between views with multiple controllers.
+It empties poller registry in addition to stopping all pollers. It means `poller.get` will always create a new poller.
+```javascript
+var myModule = angular.module('myApp', ['emguo.poller']);
+
+myModule.config(function (pollerConfig) {
+    pollerConfig.resetOnStateChange = true; // If you use $stateProvider from ui-router.
+    pollerConfig.resetOnRouteChange = true; // If you use $routeProvider from ngRoute.
+});
+```
+
 ## Supported Angular versions
 
-Angular Poller supports Angular 1.2.0 - 1.3.0. [AngularJS 1.3.0](http://angularjs.blogspot.com/2014/10/angularjs-130-superluminal-nudge.html) was released on Oct 13th 2014.
+Angular Poller supports Angular 1.2.0 - 1.3.x.
 
 ## License
 
