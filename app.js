@@ -24,13 +24,6 @@ angular.module('myApp', ['ngResource', 'emguo.poller', 'hljs'])
             });
     })
 
-    // Config angular-highlightjs
-    .config(function (hljsServiceProvider) {
-        hljsServiceProvider.setOptions({
-            languages: ['javascript']
-        });
-    })
-
     .controller('myController', function ($scope, poller, greet1, greet2) {
         var poller1, poller2;
 
