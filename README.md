@@ -324,7 +324,7 @@ Angular Poller supports Angular 1.2.0 - 1.3.x.
 
 The MIT License (MIT)
 
-Copyright (c) 2013-2014 Emma Guo
+Copyright (c) 2013-2015 Emma Guo
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
