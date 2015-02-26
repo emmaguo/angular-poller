@@ -444,6 +444,16 @@ describe('emguo.poller', function () {
                 expect(anotherPoller.delay).to.equal(1000);
             });
 
+            it('should always set (and overwrite) normalDelay same as delay.', function() {
+                anotherPoller = poller.get(target, {delay: 1000});
+                expect(anotherPoller.normalDelay).to.exist();
+                expect(anotherPoller.normalDelay).to.equal(anotherPoller.delay);
+
+                poller.get(target, {delay: 3000});
+                expect(anotherPoller.normalDelay).to.exist();
+                expect(anotherPoller.normalDelay).to.equal(anotherPoller.delay);
+            });
+
             it('should not modify delay property if it is not re-defined.', function () {
                 anotherPoller = poller.get(target);
                 expect(anotherPoller.delay).to.equal(8000);
@@ -638,5 +648,30 @@ describe('emguo.poller PollerConfig', function () {
         expect(anotherPoller.action).to.equal('get');
         expect(anotherPoller.argumentsArray.length).to.equal(0);
         expect(anotherPoller.delay).to.equal(5000);
+    });
+
+    it('should switch delay of all pollers that have idleDelay on visibilitychange.', function () {
+        module(function ($provide) {
+            $provide.constant('pollerConfig', {
+                delayOnVisibilityChange: true
+            });
+        });
+
+        inject(function (_$resource_, _poller_) {
+            $resource = _$resource_;
+            poller = _poller_;
+        });
+
+        var target = $resource('/users');
+        var myPoller = poller.get(target, {
+            delay: 5000,
+            idleDelay: 10000
+        });
+
+        poller.delayAll();
+        expect(myPoller.delay).to.equal(myPoller.idleDelay);
+
+        poller.resetDelay();
+        expect(myPoller.delay).to.equal(myPoller.normalDelay);
     });
 });

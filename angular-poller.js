@@ -41,10 +41,15 @@
             stopOnStateChange: false,
             resetOnRouteChange: false,
             resetOnStateChange: false,
+            delayOnVisibilityChange: false,
+            stopOnVisibilityChange: false,
             neverOverwrite: false
         })
 
-        .run(function ($rootScope, poller, pollerConfig) {
+        .run(function ($rootScope, $document, poller, pollerConfig) {
+            var isPageHidden = function () {
+                return document.hidden || document.webkitHidden || document.mozHidden || document.msHidden;
+            };
 
             /**
              * Automatically stop or reset all pollers before route change ($routeProvider) or state change ($stateProvider).
@@ -72,6 +77,36 @@
                     poller.reset();
                 });
             }
+
+            /**
+             * delayAll/resetDelay or stopAll/startAll on visibilitychange.
+             */
+            if (pollerConfig.delayOnVisibilityChange) {
+                var handleDelayOnVisibilityChange = function () {
+                    if (isPageHidden()) {
+                        poller.delayAll();
+                    } else {
+                        poller.resetDelay();
+                    }
+                };
+
+                handleDelayOnVisibilityChange();
+                $document.on('visibilitychange', handleDelayOnVisibilityChange);
+            }
+
+            if (pollerConfig.stopOnVisibilityChange) {
+                var handleStopOnVisibilityChange = function () {
+                    if (isPageHidden()) {
+                        poller.stopAll();
+                    } else {
+                        poller.startAll();
+                    }
+                };
+
+                handleStopOnVisibilityChange();
+                $document.on('visibilitychange', handleStopOnVisibilityChange);
+            }
+
         })
 
         .factory('poller', function ($interval, $q, $http, pollerConfig) {
@@ -82,6 +117,7 @@
                     action: 'get',
                     argumentsArray: [],
                     delay: 5000,
+                    idleDelay: 10000,
                     smart: false,
                     catchError: false
                 },
@@ -140,11 +176,12 @@
                  * @param options
                  */
                 set: function (options) {
-
-                    angular.forEach(['action', 'argumentsArray', 'delay', 'smart', 'catchError'], function (prop) {
+                    angular.forEach(['action', 'argumentsArray', 'delay', 'normalDelay', 'idleDelay', 'smart', 'catchError'], function (prop) {
                         if (options && options[prop]) {
                             this[prop] = options[prop];
-                        } else if (!this[prop]) {
+                        } else if (prop === 'normalDelay') {
+                            this[prop] = this.delay;
+                        } else if (!this[prop] && prop !== 'idleDelay') {
                             this[prop] = defaults[prop];
                         }
                     }, this);
@@ -285,6 +322,15 @@
                 },
 
                 /**
+                 * Start all poller services.
+                 */
+                startAll: function () {
+                    angular.forEach(pollers, function (p) {
+                        p.start();
+                    });
+                },
+
+                /**
                  * Stop all poller services.
                  */
                 stopAll: function () {
@@ -308,7 +354,32 @@
                 reset: function () {
                     this.stopAll();
                     pollers = [];
+                },
+
+                /**
+                 * Switch all poller services delay to idleDelay
+                 */
+                delayAll: function() {
+                    angular.forEach(pollers, function (p) {
+                        if (angular.isDefined(p.idleDelay)) {
+                            p.delay = p.idleDelay;
+                            p.restart();
+                        }
+                    });
+                },
+
+                /**
+                 * Switch all poller services delay back to normalDelay
+                 */
+                resetDelay: function() {
+                    angular.forEach(pollers, function (p) {
+                        if (angular.isDefined(p.idleDelay)) {
+                            p.delay = p.normalDelay;
+                            p.restart();
+                        }
+                    });
                 }
+
             };
         }
     );

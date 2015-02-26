@@ -316,6 +316,34 @@ myModule.config(function (pollerConfig) {
 });
 ```
 
+### Automatically switch to longer delay when page visibility changes
+You can also use `pollerConfig` to automatically switch interval delay for all pollers that you set `idleDelay` property.
+```javascript
+var myModule = angular.module('myApp', ['emguo.poller']);
+
+myModule.config(function (pollerConfig) {
+    pollerConfig.delayOnVisibilityChange = true;
+});
+
+myModule.controller('controller', function (poller) {
+    var myPoller = poller.get('/progress', {
+        delay: 5000,
+        idleDelay: 10000
+    });
+});
+```
+
+### Automatically stop all pollers when page visibility changes
+You can also use `pollerConfig` to automatically stop all pollers when page loses visibility, and start all pollers again
+once page gains visibility.
+```javascript
+var myModule = angular.module('myApp', ['emguo.poller']);
+
+myModule.config(function (pollerConfig) {
+    pollerConfig.stopOnVisibilityChange = true;
+});
+```
+
 ## Supported Angular versions
 
 Angular Poller supports Angular 1.2.0 - 1.3.x.
