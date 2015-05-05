@@ -530,6 +530,16 @@ describe('emguo.poller', function () {
             expect(poller2.interval).to.equal(undefined);
             expect(poller.size()).to.equal(0);
         });
+
+        it('should stop and remove a specific poller service on invoking remove().', function () {
+            poller.remove(poller1);
+            expect(poller.size()).to.equal(1);
+        });
+
+        it('should handle not finding a specific poller service on invoking remove().', function () {
+            poller.remove({});
+            expect(poller.size()).to.equal(2);
+        });
     });
 });
 
