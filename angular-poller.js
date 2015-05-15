@@ -41,7 +41,8 @@
             stopOnStateChange: false,
             resetOnRouteChange: false,
             resetOnStateChange: false,
-            neverOverwrite: false
+            neverOverwrite: false,
+            smart: false
         })
 
         .run(function ($rootScope, poller, pollerConfig) {
@@ -82,7 +83,7 @@
                     action: 'get',
                     argumentsArray: [],
                     delay: 5000,
-                    smart: false,
+                    smart: pollerConfig.smart,
                     catchError: false
                 },
 
