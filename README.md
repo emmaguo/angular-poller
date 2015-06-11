@@ -318,7 +318,7 @@ myModule.config(function (pollerConfig) {
 
 ## Supported Angular versions
 
-Angular Poller supports Angular 1.2.0 - 1.3.x.
+Angular Poller supports Angular 1.2.0 - 1.4.x.
 
 ## License
 
