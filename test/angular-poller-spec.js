@@ -616,8 +616,7 @@ describe('emguo.poller PollerConfig', function () {
             });
         });
 
-        inject(function (_$rootScope_, _$resource_, _poller_) {
-            $rootScope = _$rootScope_;
+        inject(function (_$resource_, _poller_) {
             $resource = _$resource_;
             poller = _poller_;
         });
@@ -638,5 +637,20 @@ describe('emguo.poller PollerConfig', function () {
         expect(anotherPoller.action).to.equal('get');
         expect(anotherPoller.argumentsArray.length).to.equal(0);
         expect(anotherPoller.delay).to.equal(5000);
+    });
+
+    it('should set all pollers smart if pollerConfig.smart is true.', function () {
+        module(function ($provide) {
+            $provide.constant('pollerConfig', {
+                smart: true
+            });
+        });
+
+        inject(function (_poller_) {
+            poller = _poller_;
+        });
+
+        expect(poller.get('/test1').smart).to.equal(true);
+        expect(poller.get('/test2').smart).to.equal(true);
     });
 });
