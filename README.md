@@ -277,6 +277,16 @@ var myPoller = poller.get(myTarget, {
 });
 ```
 
+You can also use `pollerConfig` to set `smart` globally for all pollers.
+
+```javascript
+var myModule = angular.module('myApp', ['emguo.poller']);
+
+myModule.config(function (pollerConfig) {
+    pollerConfig.smart = true;
+});
+```
+
 ### Always create new poller on calling `poller.get`
 By default `poller.get(target, ...)` looks for any existing poller by `target` in poller registry. If found, it overwrites
 existing poller with new parameters such as `action`, `delay`, `argumentsArray` etc if specified, and then restarts the poller.
