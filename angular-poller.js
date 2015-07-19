@@ -152,7 +152,7 @@
                 },
 
                 /**
-                 * Start poller service.
+                 * Start poller.
                  */
                 start: function () {
 
@@ -227,7 +227,7 @@
                 },
 
                 /**
-                 * Stop poller service if it is running.
+                 * Stop poller if it is running.
                  */
                 stop: function () {
 
@@ -239,7 +239,16 @@
                 },
 
                 /**
-                 * Restart poller service.
+                 * Remove poller.
+                 */
+                remove: function () {
+                    var index = pollers.indexOf(this);
+                    this.stop();
+                    pollers.splice(index, 1);
+                },
+
+                /**
+                 * Restart poller.
                  */
                 restart: function () {
                     this.stop();

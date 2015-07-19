@@ -66,6 +66,9 @@ myModule.controller('myController', function($scope, $resource, poller) {
 
     // Restart poller.
     myPoller.restart();
+
+    // Remove poller.
+    myPoller.remove();
 });
 ```
 

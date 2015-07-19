@@ -150,6 +150,14 @@ describe('emguo.poller', function () {
             expect(result2[0].name).to.equal('Alice');
         });
 
+        it('should stop poller and remove it from poller registry on invoking remove().', function () {
+            var spy = sinon.spy(poller1, 'stop');
+            expect(poller.size()).to.equal(2);
+            poller1.remove();
+            expect(spy).to.have.callCount(1);
+            expect(poller.size()).to.equal(1);
+        });
+
         it('should restart currently running poller on invoking restart().', function () {
             var intervalId = poller1.interval.$$intervalId;
 
