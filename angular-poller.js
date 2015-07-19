@@ -318,6 +318,19 @@
                 reset: function () {
                     this.stopAll();
                     pollers = [];
+                },
+
+                /**
+                * Stop and removes a specific poller service
+                */
+                remove: function (poller) {
+                    for (var i = 0, len = pollers.length; i < len; i++) {
+                        if (angular.equals(pollers[i], poller)) {
+                            pollers[i].stop();
+                            pollers.splice(i, 1);
+                            break;
+                        }
+                    }
                 }
             };
         }
