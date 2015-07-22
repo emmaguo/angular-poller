@@ -45,7 +45,7 @@
             smart: false
         })
 
-        .run(function ($rootScope, poller, pollerConfig) {
+        .run(['$rootScope', 'poller', 'pollerConfig', function ($rootScope, poller, pollerConfig) {
 
             /**
              * Automatically stop or reset all pollers before route change ($routeProvider) or state change ($stateProvider).
@@ -73,9 +73,9 @@
                     poller.reset();
                 });
             }
-        })
+        }])
 
-        .factory('poller', function ($interval, $q, $http, pollerConfig) {
+        .factory('poller', ['$interval', '$q', '$http', 'pollerConfig', function ($interval, $q, $http, pollerConfig) {
 
             var pollers = [], // Poller registry
 
@@ -320,6 +320,6 @@
                     pollers = [];
                 }
             };
-        }
+        }]
     );
 })(window, window.angular);
