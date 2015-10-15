@@ -51,25 +51,25 @@
              * Automatically stop or reset all pollers before route change ($routeProvider) or state change ($stateProvider).
              */
             if (pollerConfig.stopOnRouteChange) {
-                $rootScope.$on('$routeChangeStart', function () {
+                $rootScope.$on('$routeChangeSuccess', function () {
                     poller.stopAll();
                 });
             }
 
             if (pollerConfig.stopOnStateChange) {
-                $rootScope.$on('$stateChangeStart', function () {
+                $rootScope.$on('$stateChangeSuccess', function () {
                     poller.stopAll();
                 });
             }
 
             if (pollerConfig.resetOnRouteChange) {
-                $rootScope.$on('$routeChangeStart', function () {
+                $rootScope.$on('$routeChangeSuccess', function () {
                     poller.reset();
                 });
             }
 
             if (pollerConfig.resetOnStateChange) {
-                $rootScope.$on('$stateChangeStart', function () {
+                $rootScope.$on('$stateChangeSuccess', function () {
                     poller.reset();
                 });
             }
