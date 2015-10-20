@@ -9,6 +9,7 @@
         "grunt-contrib-jshint": "^0.11.3",
         "grunt-contrib-uglify": "^0.9.2",
         "grunt-coveralls": "^1.0.0",
+        "grunt-jscs": "^2.1.0",
         "grunt-karma": "^0.12.1",
         "grunt-ng-annotate": "^1.0.1",
         "jshint-stylish": "^2.0.1",

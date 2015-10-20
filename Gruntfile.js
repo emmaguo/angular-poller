@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
     require('load-grunt-tasks')(grunt);
 
@@ -12,6 +12,17 @@ module.exports = function (grunt) {
                 reporter: require('jshint-stylish')
             },
             target: ['Gruntfile.js', 'angular-poller.js', 'test/*.js']
+        },
+        jscs: {
+            src: [
+                'angular-poller.js',
+                'Gruntfile.js',
+                'karma.config.js',
+                'test/**/*.js'
+            ],
+            options: {
+                config: '.jscsrc'
+            }
         },
         karma: {
             develop: {
@@ -50,7 +61,7 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('develop', ['jshint', 'karma:develop']);
-    grunt.registerTask('test', ['jshint', 'karma:continuous', 'coveralls']);
+    grunt.registerTask('develop', ['jshint', 'jscs', 'karma:develop']);
+    grunt.registerTask('test', ['jshint', 'jscs', 'karma:continuous', 'coveralls']);
     grunt.registerTask('default', ['test', 'ngAnnotate', 'uglify']);
 };
