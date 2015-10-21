@@ -11,14 +11,17 @@ module.exports = function(grunt) {
                 jshintrc: '.jshintrc',
                 reporter: require('jshint-stylish')
             },
-            target: ['Gruntfile.js', 'angular-poller.js', 'test/*.js']
+            target: [
+                'Gruntfile.js',
+                'angular-poller.js',
+                'test/*.js'
+            ]
         },
         jscs: {
             src: [
-                'angular-poller.js',
                 'Gruntfile.js',
-                'karma.config.js',
-                'test/**/*.js'
+                'angular-poller.js',
+                'test/*.js'
             ],
             options: {
                 config: '.jscsrc'
@@ -61,7 +64,28 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.registerTask('develop', ['jshint', 'jscs', 'karma:develop']);
-    grunt.registerTask('test', ['jshint', 'jscs', 'karma:continuous', 'coveralls']);
-    grunt.registerTask('default', ['test', 'ngAnnotate', 'uglify']);
+    grunt.registerTask(
+        'develop', [
+            'jshint',
+            'jscs',
+            'karma:develop'
+        ]
+    );
+
+    grunt.registerTask(
+        'test', [
+            'jshint',
+            'jscs',
+            'karma:continuous',
+            'coveralls'
+        ]
+    );
+
+    grunt.registerTask(
+        'default', [
+            'test',
+            'ngAnnotate',
+            'uglify'
+        ]
+    );
 };

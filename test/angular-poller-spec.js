@@ -1,35 +1,40 @@
 'use strict';
 
-describe('emguo.poller', function () {
+describe('emguo.poller', function() {
+    var $interval;
+    var $httpBackend;
+    var $resource;
+    var Restangular;
+    var poller;
 
-    var $interval, $httpBackend, $resource, Restangular, poller;
-
-    beforeEach(function () {
-
+    beforeEach(function() {
         module('emguo.poller', 'ngResource', 'restangular');
 
-        inject(function (_$interval_, _$httpBackend_, _$resource_, _Restangular_, _poller_) {
-            $interval = _$interval_;
-            $httpBackend = _$httpBackend_;
-            $resource = _$resource_;
-            Restangular = _Restangular_;
-            poller = _poller_;
+        inject(function($injector) {
+            $interval = $injector.get('$interval');
+            $httpBackend = $injector.get('$httpBackend');
+            $resource = $injector.get('$resource');
+            Restangular = $injector.get('Restangular');
+            poller = $injector.get('poller');
         });
     });
 
-    describe('Model', function () {
+    describe('Model', function() {
+        var target1;
+        var target2;
+        var poller1;
+        var poller2;
+        var result1;
+        var result2;
 
-        var target1, target2, poller1, poller2, result1, result2;
-
-        beforeEach(function () {
-
+        beforeEach(function() {
             // Basic poller
             target1 = $resource('/admin');
             $httpBackend.expect('GET', '/admin').respond(
                 {id: 1, name: 'Alice'}
             );
             poller1 = poller.get(target1);
-            poller1.promise.then(null, null, function (data) {
+            poller1.promise.then(null, null, function(data) {
                 result1 = data;
             });
 
@@ -50,107 +55,122 @@ describe('emguo.poller', function () {
                 smart: true,
                 catchError: true
             });
-            poller2.promise.then(null, null, function (data) {
+            poller2.promise.then(null, null, function(data) {
                 result2 = data;
             });
 
             $httpBackend.flush(2);
         });
 
-        afterEach(function () {
+        afterEach(function() {
             $httpBackend.verifyNoOutstandingExpectation();
             $httpBackend.verifyNoOutstandingRequest();
         });
 
-        it('should have target property.', function () {
+        it('should have target property.', function() {
             expect(poller1).to.have.property('target').to.equal(target1);
             expect(poller2).to.have.property('target').to.equal(target2);
         });
 
-        it('should have default action property - get.', function () {
+        it('should have default action property - get.', function() {
             expect(poller1).to.have.property('action').to.equal('get');
         });
 
-        it('should have customized action if it is specified.', function () {
+        it('should have customized action if it is specified.', function() {
             expect(poller2).to.have.property('action').to.equal('query');
         });
 
-        it('should have default delay property - 5000.', function () {
+        it('should have default delay property - 5000.', function() {
             expect(poller1).to.have.property('delay').to.equal(5000);
         });
 
-        it('should have customized delay if it is specified.', function () {
+        it('should have customized delay if it is specified.', function() {
             expect(poller2).to.have.property('delay').to.equal(6000);
         });
 
-        it('should have default argumentsArray property - empty array.', function () {
+        it('should have default argumentsArray property - empty array.', function() {
             expect(poller1).to.have.property('argumentsArray');
             expect(poller1.argumentsArray.length).to.equal(0);
         });
 
-        it('should have customized argumentsArray if it is specified.', function () {
+        it('should have customized argumentsArray if it is specified.', function() {
             expect(poller2.argumentsArray[0]).to.deep.equal({group: 1});
         });
 
-        it('should have default smart flag set to false.', function () {
+        it('should have default smart flag set to false.', function() {
             expect(poller1).to.have.property('smart').to.equal(false);
         });
 
-        it('should have smart flag set to true if it is specified.', function () {
+        it('should have smart flag set to true if it is specified.', function() {
             expect(poller2).to.have.property('smart').to.equal(true);
         });
 
-        it('should have default catchError flag set to false.', function () {
+        it('should have default catchError flag set to false.', function() {
             expect(poller1).to.have.property('catchError').to.equal(false);
         });
 
-        it('should have catchError flag set to true if it is specified.', function () {
+        it('should have catchError flag set to true if it is specified.', function() {
             expect(poller2).to.have.property('catchError').to.equal(true);
         });
 
-        it('should have promise property.', function () {
+        it('should have promise property.', function() {
             expect(poller1).to.have.property('promise');
             expect(poller2).to.have.property('promise');
         });
 
-        it('should have interval property to manage polling.', function () {
+        it('should have interval property to manage polling.', function() {
             expect(poller1).to.have.property('interval');
             expect(poller2).to.have.property('interval');
         });
 
-        it('should stop polling and reset interval on invoking stop().', function () {
+        it('should stop polling and reset interval on invoking stop().', function() {
             var current = new Date();
             poller1.stop();
             expect(poller1.interval).to.equal(undefined);
             expect(current - poller1.stopTimestamp).to.be.at.most(1);
         });
 
-        it('should ignore success response if request is sent before stop() is invoked', function () {
+        it('should ignore success response if request is sent before stop() is invoked', function() {
             poller2.stop();
             $httpBackend.expect('GET', '/admin').respond({id: 2, name: 'Bob'});
-            $interval.flush(5000); // Request at t = 5000 ms.
-            poller1.stop();
-            poller1.stopTimestamp = poller1.stopTimestamp + 100; // Poller1 is stopped at t = 5100 ms.
-            $httpBackend.flush(1); // Response is ignored because request is sent before poller1 is stopped.
 
+            // Request at t = 5000 ms.
+            $interval.flush(5000);
+            poller1.stop();
+
+            // Poller1 is stopped at t = 5100 ms.
+            poller1.stopTimestamp = poller1.stopTimestamp + 100;
+            $httpBackend.flush(1);
+
+            // Response is ignored because request is sent before poller1 is stopped.
             expect(result1.id).to.equal(1);
             expect(result1.name).to.equal('Alice');
         });
 
-        it('should ignore error response if request is sent before stop() is invoked', function () {
+        it('should ignore error response if request is sent before stop() is invoked', function() {
             poller1.stop();
-            $httpBackend.expect('GET', '/users?group=1').respond(503, 'Service Unavailable', {}, 'Service Unavailable');
-            $interval.flush(6000); // Request at t = 6000 ms.
-            poller2.stop();
-            poller2.stopTimestamp = poller2.stopTimestamp + 100; // Poller2 is stopped at t = 6100 ms.
-            $httpBackend.flush(1); // Response is ignored because request is sent before poller2 is stopped.
+            $httpBackend.expect('GET', '/users?group=1').respond(
+                503,
+                'Service Unavailable',
+                {},
+                'Service Unavailable'
+            );
 
+            // Request at t = 6000 ms.
+            $interval.flush(6000);
+            poller2.stop();
+
+            // Poller2 is stopped at t = 6100 ms.
+            poller2.stopTimestamp = poller2.stopTimestamp + 100;
+            $httpBackend.flush(1);
+
+            // Response is ignored because request is sent before poller2 is stopped.
             expect(poller2.catchError).to.equal(true);
             expect(result2.length).to.equal(2);
             expect(result2[0].name).to.equal('Alice');
         });
 
-        it('should stop poller and remove it from poller registry on invoking remove().', function () {
+        it('should stop poller and remove it from poller registry on invoking remove().', function() {
             var spy = sinon.spy(poller1, 'stop');
             expect(poller.size()).to.equal(2);
             poller1.remove();
@@ -158,7 +178,7 @@ describe('emguo.poller', function () {
             expect(poller.size()).to.equal(1);
         });
 
-        it('should restart currently running poller on invoking restart().', function () {
+        it('should restart currently running poller on invoking restart().', function() {
             var intervalId = poller1.interval.$$intervalId;
 
             $httpBackend.expect('GET', '/admin').respond({id: 2, name: 'Bob'});
@@ -170,7 +190,7 @@ describe('emguo.poller', function () {
             expect(result1.name).to.equal('Bob');
         });
 
-        it('should start already stopped poller on invoking restart().', function () {
+        it('should start already stopped poller on invoking restart().', function() {
             poller1.stop();
             expect(poller1.interval).to.equal(undefined);
 
@@ -183,7 +203,7 @@ describe('emguo.poller', function () {
             expect(result1.name).to.equal('Bob');
         });
 
-        it('should have correct data in callback.', function () {
+        it('should have correct data in callback.', function() {
             expect(result1.id).to.equal(1);
             expect(result1.name).to.equal('Alice');
 
@@ -191,44 +211,62 @@ describe('emguo.poller', function () {
             expect(result2[0].name).to.equal('Alice');
         });
 
-        it('should send request every (delay) milliseconds if smart flag is set to false.', function () {
+        it('should send request every (delay) milliseconds if smart flag is set to false.', function() {
             poller2.stop();
             $httpBackend.expect('GET', '/admin').respond(null);
             $httpBackend.expect('GET', '/admin').respond({id: 3, name: 'Emma'});
-            $interval.flush(10100); // 5000 + 5000 + 100
+
+            // 5000 + 5000 + 100
+            $interval.flush(10100);
             $httpBackend.flush(2);
 
             expect(result1.id).to.equal(3);
             expect(result1.name).to.equal('Emma');
         });
 
-        it('should only send new request if the previous one is resolved if smart flag is set to true', function () {
+        it('should only send new request if the previous one is resolved if smart flag is set to true', function() {
             poller1.stop();
             $httpBackend.expect('GET', '/users?group=1').respond([
                 {id: 1, name: 'Alice'},
                 {id: 2, name: 'Bob'},
                 {id: 3, name: 'Emma'}
             ]);
-            $interval.flush(12100); // 6000 + 6000 + 100
+
+            // 6000 + 6000 + 100
+            $interval.flush(12100);
             $httpBackend.flush(1);
 
             expect(result2.length).to.equal(3);
         });
 
-        it('should only get notified of success responses if catchError flag is set to false.', function () {
+        it('should only get notified of success responses if catchError flag is set to false.', function() {
             var previousResult = result1;
             poller2.stop();
-            $httpBackend.expect('GET', '/admin').respond(503, 'Service Unavailable', {}, 'Service Unavailable');
-            $interval.flush(5100); // 5000 + 100
+            $httpBackend.expect('GET', '/admin').respond(
+                503,
+                'Service Unavailable',
+                {},
+                'Service Unavailable'
+            );
+
+            // 5000 + 100
+            $interval.flush(5100);
             $httpBackend.flush(1);
 
             expect(result1).to.equal(previousResult);
         });
 
-        it('should get notified of both success and error responses if catchError flag is set to true.', function () {
+        it('should get notified of both success and error responses if catchError flag is set to true.', function() {
             poller1.stop();
-            $httpBackend.expect('GET', '/users?group=1').respond(503, 'Service Unavailable', {}, 'Service Unavailable');
-            $interval.flush(6100); // 6000 + 100
+            $httpBackend.expect('GET', '/users?group=1').respond(
+                503,
+                'Service Unavailable',
+                {},
+                'Service Unavailable'
+            );
+
+            // 6000 + 100
+            $interval.flush(6100);
             $httpBackend.flush(1);
 
             expect(result2.status).to.equal(503);
@@ -239,16 +277,18 @@ describe('emguo.poller', function () {
                 {id: 2, name: 'Bob'},
                 {id: 3, name: 'Emma'}
             ]);
-            $interval.flush(6100); // 6000 + 100
+
+            // 6000 + 100
+            $interval.flush(6100);
             $httpBackend.flush(1);
 
             expect(result2.length).to.equal(3);
         });
     });
 
-    describe('$resource', function () {
+    describe('$resource', function() {
 
-        it('should make GET requests correctly.', function () {
+        it('should make GET requests correctly.', function() {
             poller.get($resource('/admin'), {
                 argumentsArray: [
                     {
@@ -262,7 +302,7 @@ describe('emguo.poller', function () {
             $httpBackend.flush(1);
         });
 
-        it('should make non-GET requests correctly.', function () {
+        it('should make non-GET requests correctly.', function() {
             poller.get($resource('/admin'), {
                 action: 'save',
                 argumentsArray: [
@@ -281,9 +321,9 @@ describe('emguo.poller', function () {
         });
     });
 
-    describe('Restangular', function () {
+    describe('Restangular', function() {
 
-        it('should call element methods correctly.', function () {
+        it('should call element methods correctly.', function() {
             poller.get(Restangular.one('admin', 123), {
                 action: 'get',
                 argumentsArray: [
@@ -297,13 +337,13 @@ describe('emguo.poller', function () {
                 ]
             });
 
-            $httpBackend.expect('GET', '/admin/123?param1=1&param2=2', undefined, function (headers) {
+            $httpBackend.expect('GET', '/admin/123?param1=1&param2=2', undefined, function(headers) {
                 return headers.header1 === 1;
             }).respond([]);
             $httpBackend.flush(1);
         });
 
-        it('should call collection methods correctly.', function () {
+        it('should call collection methods correctly.', function() {
             poller.get(Restangular.all('users'), {
                 action: 'getList',
                 argumentsArray: [
@@ -317,13 +357,13 @@ describe('emguo.poller', function () {
                 ]
             });
 
-            $httpBackend.expect('GET', '/users?param1=1&param2=2', undefined, function (headers) {
+            $httpBackend.expect('GET', '/users?param1=1&param2=2', undefined, function(headers) {
                 return headers.header1 === 1;
             }).respond([]);
             $httpBackend.flush(1);
         });
 
-        it('should call custom methods correctly.', function () {
+        it('should call custom methods correctly.', function() {
             poller.get(Restangular.one('admin', 123), {
                 action: 'customGET',
                 argumentsArray: [
@@ -338,16 +378,16 @@ describe('emguo.poller', function () {
                 ]
             });
 
-            $httpBackend.expect('GET', '/admin/123/test?param1=1&param2=2', undefined, function (headers) {
+            $httpBackend.expect('GET', '/admin/123/test?param1=1&param2=2', undefined, function(headers) {
                 return headers.header1 === 1;
             }).respond([]);
             $httpBackend.flush(1);
         });
     });
 
-    describe('$http', function () {
+    describe('$http', function() {
 
-        it('should make GET requests correctly.', function () {
+        it('should make GET requests correctly.', function() {
             poller.get('/admin', {
                 argumentsArray: [
                     {
@@ -362,13 +402,13 @@ describe('emguo.poller', function () {
                 ]
             });
 
-            $httpBackend.expect('GET', '/admin?param1=1&param2=2', undefined, function (headers) {
+            $httpBackend.expect('GET', '/admin?param1=1&param2=2', undefined, function(headers) {
                 return headers.header1 === 1;
             }).respond({});
             $httpBackend.flush(1);
         });
 
-        it('should make POST requests correctly.', function () {
+        it('should make POST requests correctly.', function() {
             poller.get('/admin', {
                 action: 'post',
                 argumentsArray: [
@@ -387,39 +427,40 @@ describe('emguo.poller', function () {
                 ]
             });
 
-            $httpBackend.expect('POST', '/admin?param1=1&param2=2', '{"data1":1}', function (headers) {
+            $httpBackend.expect('POST', '/admin?param1=1&param2=2', '{"data1":1}', function(headers) {
                 return headers.header1 === 1;
             }).respond({});
             $httpBackend.flush(1);
         });
     });
 
-    describe('Get', function () {
+    describe('Get', function() {
+        var target;
+        var myPoller;
+        var anotherPoller;
 
-        var target, myPoller, anotherPoller;
+        describe('if poller is not registered yet,', function() {
 
-        describe('if poller is not registered yet,', function () {
-
-            beforeEach(function () {
+            beforeEach(function() {
                 myPoller = poller.get($resource('/users'));
             });
 
-            it('should create new poller on invoking get().', function () {
+            it('should create new poller on invoking get().', function() {
                 expect(myPoller).to.not.equal(null);
             });
 
-            it('should increase poller registry size by one.', function () {
+            it('should increase poller registry size by one.', function() {
                 expect(poller.size()).to.equal(1);
             });
 
-            it('should start poller.', function () {
+            it('should start poller.', function() {
                 expect(myPoller.interval.$$intervalId).not.to.equal(null);
             });
         });
 
-        describe('if poller is already registered,', function () {
+        describe('if poller is already registered,', function() {
 
-            beforeEach(function () {
+            beforeEach(function() {
                 target = $resource('/users');
                 myPoller = poller.get(target, {
                     action: 'query',
@@ -432,69 +473,69 @@ describe('emguo.poller', function () {
                 });
             });
 
-            it('should not create a new poller on invoking get().', function () {
+            it('should not create a new poller on invoking get().', function() {
                 anotherPoller = poller.get(target);
                 expect(anotherPoller).to.equal(myPoller);
             });
 
-            it('should overwrite poller.action if it is re-defined.', function () {
+            it('should overwrite poller.action if it is re-defined.', function() {
                 anotherPoller = poller.get(target, {action: 'get'});
                 expect(anotherPoller.action).to.equal('get');
             });
 
-            it('should not modify action property if it is not re-defined.', function () {
+            it('should not modify action property if it is not re-defined.', function() {
                 anotherPoller = poller.get(target);
                 expect(anotherPoller.action).to.equal('query');
             });
 
-            it('should overwrite poller.delay if it is re-defined.', function () {
+            it('should overwrite poller.delay if it is re-defined.', function() {
                 anotherPoller = poller.get(target, {delay: 1000});
                 expect(anotherPoller.delay).to.equal(1000);
             });
 
-            it('should not modify delay property if it is not re-defined.', function () {
+            it('should not modify delay property if it is not re-defined.', function() {
                 anotherPoller = poller.get(target);
                 expect(anotherPoller.delay).to.equal(8000);
             });
 
-            it('should overwrite poller.argumentsArray if it is re-defined.', function () {
+            it('should overwrite poller.argumentsArray if it is re-defined.', function() {
                 anotherPoller = poller.get(target, {argumentsArray: []});
                 expect(anotherPoller.argumentsArray.length).to.equal(0);
             });
 
-            it('should not modify argumentsArray property if it is not re-defined.', function () {
+            it('should not modify argumentsArray property if it is not re-defined.', function() {
                 anotherPoller = poller.get(target);
                 expect(anotherPoller.argumentsArray[0]).to.deep.equal({group: 1});
             });
 
-            it('should overwrite poller.smart if it is re-defined.', function () {
+            it('should overwrite poller.smart if it is re-defined.', function() {
                 anotherPoller = poller.get(target, {smart: true});
                 expect(anotherPoller.smart).to.equal(true);
             });
 
-            it('should not modify smart flag if it is not re-defined.', function () {
+            it('should not modify smart flag if it is not re-defined.', function() {
                 anotherPoller = poller.get(target);
                 expect(anotherPoller.smart).to.equal(false);
             });
 
-            it('should overwrite poller.catchError if it is re-defined.', function () {
+            it('should overwrite poller.catchError if it is re-defined.', function() {
                 anotherPoller = poller.get(target, {catchError: true});
                 expect(anotherPoller.catchError).to.equal(true);
             });
 
-            it('should not modify catchError flag if it is not re-defined.', function () {
+            it('should not modify catchError flag if it is not re-defined.', function() {
                 anotherPoller = poller.get(target);
                 expect(anotherPoller.catchError).to.equal(false);
             });
 
-            it('should start polling if it is currently stopped.', function () {
+            it('should start polling if it is currently stopped.', function() {
                 myPoller.stop();
                 expect(myPoller.interval).to.equal(undefined);
                 anotherPoller = poller.get(target);
                 expect(myPoller.interval.$$intervalId).to.not.equal(null);
             });
 
-            it('should restart polling if it is currently running.', function () {
+            it('should restart polling if it is currently running.', function() {
                 var intervalId = myPoller.interval.$$intervalId;
                 anotherPoller = poller.get(target);
                 expect(anotherPoller.interval.$$intervalId).to.not.equal(intervalId);
@@ -502,29 +543,29 @@ describe('emguo.poller', function () {
         });
     });
 
-    describe('Actions', function () {
+    describe('Actions', function() {
+        var poller1;
+        var poller2;
 
-        var poller1, poller2;
-
-        beforeEach(function () {
+        beforeEach(function() {
 
             poller1 = poller.get($resource('/test1'));
             poller2 = poller.get($resource('/test2'));
         });
 
-        it('should return correct number of pollers on invoking size().', function () {
+        it('should return correct number of pollers on invoking size().', function() {
             expect(poller.size()).to.equal(2);
         });
 
-        it('should stop all poller services on invoking stopAll().', function () {
+        it('should stop all poller services on invoking stopAll().', function() {
             poller.stopAll();
             expect(poller1.interval).to.equal(undefined);
             expect(poller2.interval).to.equal(undefined);
         });
 
-        it('should restart all poller services on invoking restartAll().', function () {
-            var intervalId1 = poller1.interval.$$intervalId,
-                intervalId2 = poller2.interval.$$intervalId;
+        it('should restart all poller services on invoking restartAll().', function() {
+            var intervalId1 = poller1.interval.$$intervalId;
+            var intervalId2 = poller2.interval.$$intervalId;
 
             poller.restartAll();
 
@@ -532,7 +573,7 @@ describe('emguo.poller', function () {
             expect(poller2.interval.$$intervalId).to.not.equal(intervalId2);
         });
 
-        it('should stop and remove all poller services on invoking reset().', function () {
+        it('should stop and remove all poller services on invoking reset().', function() {
             poller.reset();
             expect(poller1.interval).to.equal(undefined);
             expect(poller2.interval).to.equal(undefined);
@@ -541,24 +582,26 @@ describe('emguo.poller', function () {
     });
 });
 
-describe('emguo.poller PollerConfig', function () {
+describe('emguo.poller PollerConfig', function() {
+    var $rootScope;
+    var $resource;
+    var poller;
+    var spy;
 
-    var $rootScope, $resource, poller, spy;
-
-    beforeEach(function () {
+    beforeEach(function() {
         module('emguo.poller', 'ngResource');
     });
 
-    it('should stop all pollers on $routeChangeStart if pollerConfig.stopOnRouteChange is true.', function () {
-        module(function ($provide) {
+    it('should stop all pollers on $routeChangeStart if pollerConfig.stopOnRouteChange is true.', function() {
+        module(function($provide) {
             $provide.constant('pollerConfig', {
                 stopOnRouteChange: true
             });
         });
 
-        inject(function (_$rootScope_, _poller_) {
-            $rootScope = _$rootScope_;
-            poller = _poller_;
+        inject(function($injector) {
+            $rootScope = $injector.get('$rootScope');
+            poller = $injector.get('poller');
         });
 
         spy = sinon.spy(poller, 'stopAll');
@@ -566,16 +609,16 @@ describe('emguo.poller PollerConfig', function () {
         expect(spy).to.have.callCount(1);
     });
 
-    it('should stop all pollers on $stateChangeStart if pollerConfig.stopOnStateChange is true.', function () {
-        module(function ($provide) {
+    it('should stop all pollers on $stateChangeStart if pollerConfig.stopOnStateChange is true.', function() {
+        module(function($provide) {
             $provide.constant('pollerConfig', {
                 stopOnStateChange: true
             });
         });
 
-        inject(function (_$rootScope_, _poller_) {
-            $rootScope = _$rootScope_;
-            poller = _poller_;
+        inject(function($injector) {
+            $rootScope = $injector.get('$rootScope');
+            poller = $injector.get('poller');
         });
 
         spy = sinon.spy(poller, 'stopAll');
@@ -583,16 +626,16 @@ describe('emguo.poller PollerConfig', function () {
         expect(spy).to.have.callCount(1);
     });
 
-    it('should reset all pollers on $routeChangeStart if pollerConfig.resetOnRouteChange is true.', function () {
-        module(function ($provide) {
+    it('should reset all pollers on $routeChangeStart if pollerConfig.resetOnRouteChange is true.', function() {
+        module(function($provide) {
             $provide.constant('pollerConfig', {
                 resetOnRouteChange: true
             });
         });
 
-        inject(function (_$rootScope_, _poller_) {
-            $rootScope = _$rootScope_;
-            poller = _poller_;
+        inject(function($injector) {
+            $rootScope = $injector.get('$rootScope');
+            poller = $injector.get('poller');
         });
 
         spy = sinon.spy(poller, 'reset');
@@ -600,16 +643,16 @@ describe('emguo.poller PollerConfig', function () {
         expect(spy).to.have.callCount(1);
     });
 
-    it('should reset all pollers on $stateChangeStart if pollerConfig.resetOnStateChange is true.', function () {
-        module(function ($provide) {
+    it('should reset all pollers on $stateChangeStart if pollerConfig.resetOnStateChange is true.', function() {
+        module(function($provide) {
             $provide.constant('pollerConfig', {
                 resetOnStateChange: true
             });
         });
 
-        inject(function (_$rootScope_, _poller_) {
-            $rootScope = _$rootScope_;
-            poller = _poller_;
+        inject(function($injector) {
+            $rootScope = $injector.get('$rootScope');
+            poller = $injector.get('poller');
         });
 
         spy = sinon.spy(poller, 'reset');
@@ -617,16 +660,16 @@ describe('emguo.poller PollerConfig', function () {
         expect(spy).to.have.callCount(1);
     });
 
-    it('should always create new poller if pollerConfig.neverOverwrite is true.', function () {
-        module(function ($provide) {
+    it('should always create new poller if pollerConfig.neverOverwrite is true.', function() {
+        module(function($provide) {
             $provide.constant('pollerConfig', {
                 neverOverwrite: true
             });
         });
 
-        inject(function (_$resource_, _poller_) {
-            $resource = _$resource_;
-            poller = _poller_;
+        inject(function($injector) {
+            $resource = $injector.get('$resource');
+            poller = $injector.get('poller');
         });
 
         var target = $resource('/users');
@@ -647,15 +690,15 @@ describe('emguo.poller PollerConfig', function () {
         expect(anotherPoller.delay).to.equal(5000);
     });
 
-    it('should set all pollers smart if pollerConfig.smart is true.', function () {
-        module(function ($provide) {
+    it('should set all pollers smart if pollerConfig.smart is true.', function() {
+        module(function($provide) {
             $provide.constant('pollerConfig', {
                 smart: true
             });
         });
 
-        inject(function (_poller_) {
-            poller = _poller_;
+        inject(function($injector) {
+            poller = $injector.get('poller');
         });
 
         expect(poller.get('/test1').smart).to.equal(true);

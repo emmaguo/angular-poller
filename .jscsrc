@@ -2,5 +2,10 @@
     "preset": "airbnb",
     "validateIndentation": 4,
     "requireTrailingComma": false,
-    "safeContextKeyword": "self"
+    "safeContextKeyword": "self",
+    "requirePaddingNewLinesAfterBlocks": {
+        "allExcept": [
+            "inCallExpressions"
+        ]
+    }
 }
