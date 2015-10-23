@@ -1,7 +1,7 @@
 {
     "name": "angularpoller",
     "main": "angular-poller.min.js",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "description": "Poller service for AngularJS",
     "homepage": "https://github.com/emmaguo/angular-poller.git",
     "author": {
