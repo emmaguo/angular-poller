@@ -1,5 +1,6 @@
 {
     "preset": "airbnb",
+    "disallowMultipleSpaces": true,
     "validateIndentation": 4,
     "requireTrailingComma": false,
     "safeContextKeyword": "self",

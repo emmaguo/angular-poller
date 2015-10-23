@@ -59,27 +59,39 @@
                  * change ($routeProvider) or state change ($stateProvider).
                  */
                 if (pollerConfig.stopOnRouteChange) {
-                    $rootScope.$on('$routeChangeStart', function() {
-                        poller.stopAll();
-                    });
+                    $rootScope.$on(
+                        '$routeChangeStart',
+                        function() {
+                            poller.stopAll();
+                        }
+                    );
                 }
 
                 if (pollerConfig.stopOnStateChange) {
-                    $rootScope.$on('$stateChangeStart', function() {
-                        poller.stopAll();
-                    });
+                    $rootScope.$on(
+                        '$stateChangeStart',
+                        function() {
+                            poller.stopAll();
+                        }
+                    );
                 }
 
                 if (pollerConfig.resetOnRouteChange) {
-                    $rootScope.$on('$routeChangeStart', function() {
-                        poller.reset();
-                    });
+                    $rootScope.$on(
+                        '$routeChangeStart',
+                        function() {
+                            poller.reset();
+                        }
+                    );
                 }
 
                 if (pollerConfig.resetOnStateChange) {
-                    $rootScope.$on('$stateChangeStart', function() {
-                        poller.reset();
-                    });
+                    $rootScope.$on(
+                        '$stateChangeStart',
+                        function() {
+                            poller.reset();
+                        }
+                    );
                 }
             }
         ])
