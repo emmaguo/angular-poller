@@ -548,7 +548,6 @@ describe('emguo.poller', function() {
         var poller2;
 
         beforeEach(function() {
-
             poller1 = poller.get($resource('/test1'));
             poller2 = poller.get($resource('/test2'));
         });
@@ -587,76 +586,137 @@ describe('emguo.poller PollerConfig', function() {
     var $resource;
     var poller;
     var spy;
+    var anotherSpy;
 
     beforeEach(function() {
         module('emguo.poller', 'ngResource');
     });
 
-    it('should stop all pollers on $routeChangeStart if pollerConfig.stopOnRouteChange is true.', function() {
-        module(function($provide) {
-            $provide.constant('pollerConfig', {
-                stopOnRouteChange: true
-            });
-        });
-
+    function instantiate() {
         inject(function($injector) {
             $rootScope = $injector.get('$rootScope');
+            $resource = $injector.get('$resource');
             poller = $injector.get('poller');
         });
+    }
 
+    it('should not listen to invalid events', function() {
+        module(function($provide) {
+            $provide.constant('pollerConfig', {
+                stopOn: 'randomEvent',
+                resetOn: 'randomEvent'
+            });
+        });
+        instantiate();
+        spy = sinon.spy(poller, 'stopAll');
+        anotherSpy = sinon.spy(poller, 'reset');
+        $rootScope.$broadcast('randomEvent');
+
+        expect(spy).to.have.callCount(0);
+        expect(anotherSpy).to.have.callCount(0);
+    });
+
+    it('should stop all pollers on $routeChangeStart if pollerConfig.stopOn is set to $routeChangeStart.', function() {
+        module(function($provide) {
+            $provide.constant('pollerConfig', {
+                stopOn: '$routeChangeStart'
+            });
+        });
+        instantiate();
         spy = sinon.spy(poller, 'stopAll');
         $rootScope.$broadcast('$routeChangeStart');
+
         expect(spy).to.have.callCount(1);
     });
 
-    it('should stop all pollers on $stateChangeStart if pollerConfig.stopOnStateChange is true.', function() {
+    it('should stop all pollers on $routeChangeSuccess if pollerConfig.stopOn is set to $routeChangeSuccess.', function() {
         module(function($provide) {
             $provide.constant('pollerConfig', {
-                stopOnStateChange: true
+                stopOn: '$routeChangeSuccess'
             });
         });
+        instantiate();
+        spy = sinon.spy(poller, 'stopAll');
+        $rootScope.$broadcast('$routeChangeSuccess');
 
-        inject(function($injector) {
-            $rootScope = $injector.get('$rootScope');
-            poller = $injector.get('poller');
+        expect(spy).to.have.callCount(1);
+    });
+
+    it('should stop all pollers on $stateChangeStart if pollerConfig.stopOn is set to $stateChangeStart.', function() {
+        module(function($provide) {
+            $provide.constant('pollerConfig', {
+                stopOn: '$stateChangeStart'
+            });
         });
-
+        instantiate();
         spy = sinon.spy(poller, 'stopAll');
         $rootScope.$broadcast('$stateChangeStart');
+
         expect(spy).to.have.callCount(1);
     });
 
-    it('should reset all pollers on $routeChangeStart if pollerConfig.resetOnRouteChange is true.', function() {
+    it('should stop all pollers on $stateChangeSuccess if pollerConfig.stopOn is set to $stateChangeSuccess.', function() {
         module(function($provide) {
             $provide.constant('pollerConfig', {
-                resetOnRouteChange: true
+                stopOn: '$stateChangeSuccess'
             });
         });
+        instantiate();
+        spy = sinon.spy(poller, 'stopAll');
+        $rootScope.$broadcast('$stateChangeSuccess');
 
-        inject(function($injector) {
-            $rootScope = $injector.get('$rootScope');
-            poller = $injector.get('poller');
+        expect(spy).to.have.callCount(1);
+    });
+
+    it('should reset all pollers on $routeChangeStart if pollerConfig.resetOn is set to $routeChangeStart.', function() {
+        module(function($provide) {
+            $provide.constant('pollerConfig', {
+                resetOn: '$routeChangeStart'
+            });
         });
-
+        instantiate();
         spy = sinon.spy(poller, 'reset');
         $rootScope.$broadcast('$routeChangeStart');
+
         expect(spy).to.have.callCount(1);
     });
 
-    it('should reset all pollers on $stateChangeStart if pollerConfig.resetOnStateChange is true.', function() {
+    it('should reset all pollers on $routeChangeSuccess if pollerConfig.resetOn is set to $routeChangeSuccess.', function() {
         module(function($provide) {
             $provide.constant('pollerConfig', {
-                resetOnStateChange: true
+                resetOn: '$routeChangeSuccess'
             });
         });
+        instantiate();
+        spy = sinon.spy(poller, 'reset');
+        $rootScope.$broadcast('$routeChangeSuccess');
 
-        inject(function($injector) {
-            $rootScope = $injector.get('$rootScope');
-            poller = $injector.get('poller');
+        expect(spy).to.have.callCount(1);
+    });
+
+    it('should reset all pollers on $stateChangeStart if pollerConfig.resetOn is set to $stateChangeStart.', function() {
+        module(function($provide) {
+            $provide.constant('pollerConfig', {
+                resetOn: '$stateChangeStart'
+            });
         });
-
+        instantiate();
         spy = sinon.spy(poller, 'reset');
         $rootScope.$broadcast('$stateChangeStart');
+
+        expect(spy).to.have.callCount(1);
+    });
+
+    it('should reset all pollers on $stateChangeSuccess if pollerConfig.resetOn is set to $stateChangeSuccess.', function() {
+        module(function($provide) {
+            $provide.constant('pollerConfig', {
+                resetOn: '$stateChangeSuccess'
+            });
+        });
+        instantiate();
+        spy = sinon.spy(poller, 'reset');
+        $rootScope.$broadcast('$stateChangeSuccess');
+
         expect(spy).to.have.callCount(1);
     });
 
@@ -666,12 +726,7 @@ describe('emguo.poller PollerConfig', function() {
                 neverOverwrite: true
             });
         });
-
-        inject(function($injector) {
-            $resource = $injector.get('$resource');
-            poller = $injector.get('poller');
-        });
-
+        instantiate();
         var target = $resource('/users');
         var myPoller = poller.get(target, {
             action: 'query',
@@ -696,10 +751,7 @@ describe('emguo.poller PollerConfig', function() {
                 smart: true
             });
         });
-
-        inject(function($injector) {
-            poller = $injector.get('poller');
-        });
+        instantiate();
 
         expect(poller.get('/test1').smart).to.equal(true);
         expect(poller.get('/test2').smart).to.equal(true);

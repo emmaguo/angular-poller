@@ -312,10 +312,11 @@ In order to automatically stop all pollers when navigating between views with mu
 var myModule = angular.module('myApp', ['emguo.poller']);
 
 myModule.config(function (pollerConfig) {
-    pollerConfig.stopOnStateChange = true; // If you use $stateProvider from ui-router.
-    pollerConfig.stopOnRouteChange = true; // If you use $routeProvider from ngRoute.
+    pollerConfig.stopOn = '$stateChangeStart'; // If you use ui-router.
+    pollerConfig.stopOn = '$routeChangeStart'; // If you use ngRoute.
 });
 ```
+You also have the option to set `pollerConfig.stopOn` to `$stateChangeSuccess` or `$routeChangeSuccess`.
 
 ### Automatically reset all pollers when navigating between views
 You can also use `pollerConfig` to automatically reset all pollers when navigating between views with multiple controllers.
@@ -324,10 +325,11 @@ It empties poller registry in addition to stopping all pollers. It means `poller
 var myModule = angular.module('myApp', ['emguo.poller']);
 
 myModule.config(function (pollerConfig) {
-    pollerConfig.resetOnStateChange = true; // If you use $stateProvider from ui-router.
-    pollerConfig.resetOnRouteChange = true; // If you use $routeProvider from ngRoute.
+    pollerConfig.resetOn = '$stateChangeStart'; // If you use ui-router.
+    pollerConfig.resetOn = '$routeChangeStart'; // If you use ngRoute.
 });
 ```
+You also have the option to set `pollerConfig.resetOn` to `$stateChangeSuccess` or `$routeChangeSuccess`.
 
 ## Supported Angular versions
 

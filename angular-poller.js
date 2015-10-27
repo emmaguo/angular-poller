@@ -37,12 +37,10 @@
     angular.module('emguo.poller', [])
 
         .constant('pollerConfig', {
-            stopOnRouteChange: false,
-            stopOnStateChange: false,
-            resetOnRouteChange: false,
-            resetOnStateChange: false,
-            neverOverwrite: false,
-            smart: false
+            stopOn: null,
+            resetOn: null,
+            smart: false,
+            neverOverwrite: false
         })
 
         .run([
@@ -56,38 +54,29 @@
             ) {
                 /**
                  * Automatically stop or reset all pollers before route
-                 * change ($routeProvider) or state change ($stateProvider).
+                 * change start/success ($routeProvider) or state change
+                 * start/success ($stateProvider).
                  */
-                if (pollerConfig.stopOnRouteChange) {
+                function isValid(event) {
+                    return event && (
+                        event === '$stateChangeStart' ||
+                        event === '$routeChangeStart' ||
+                        event === '$stateChangeSuccess' ||
+                        event === '$routeChangeSuccess');
+                }
+
+                if (isValid(pollerConfig.stopOn)) {
                     $rootScope.$on(
-                        '$routeChangeStart',
+                        pollerConfig.stopOn,
                         function() {
                             poller.stopAll();
                         }
                     );
                 }
 
-                if (pollerConfig.stopOnStateChange) {
+                if (isValid(pollerConfig.resetOn)) {
                     $rootScope.$on(
-                        '$stateChangeStart',
-                        function() {
-                            poller.stopAll();
-                        }
-                    );
-                }
-
-                if (pollerConfig.resetOnRouteChange) {
-                    $rootScope.$on(
-                        '$routeChangeStart',
-                        function() {
-                            poller.reset();
-                        }
-                    );
-                }
-
-                if (pollerConfig.resetOnStateChange) {
-                    $rootScope.$on(
-                        '$stateChangeStart',
+                        pollerConfig.resetOn,
                         function() {
                             poller.reset();
                         }
