@@ -2,6 +2,7 @@
 [![Build Status](https://travis-ci.org/emmaguo/angular-poller.svg?branch=master)](https://travis-ci.org/emmaguo/angular-poller)
 [![Coverage Status](https://coveralls.io/repos/emmaguo/angular-poller/badge.svg?branch=master)](https://coveralls.io/r/emmaguo/angular-poller?branch=master)
 [![devDependency Status](https://david-dm.org/emmaguo/angular-poller/dev-status.svg)](https://david-dm.org/emmaguo/angular-poller#info=devDependencies)
+[![Bower version](https://badge.fury.io/bo/angular-poller.svg)](https://badge.fury.io/bo/angular-poller)
 
 Lightweight [AngularJS](http://angularjs.org/) poller service which can be easily injected into controllers. It uses a timer and sends requests every few seconds to keep the client synced with the server. Angular Poller supports `$resource`, `$http` and `Restangular`.
 
