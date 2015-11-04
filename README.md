@@ -21,6 +21,7 @@ Demo site: http://emmaguo.github.io/angular-poller/
 	- [Always create new poller on calling poller.get](#always-create-new-poller-on-calling-pollerget)
     - [Automatically stop all pollers when navigating between views](#automatically-stop-all-pollers-when-navigating-between-views)
     - [Automatically reset all pollers when navigating between views](#automatically-reset-all-pollers-when-navigating-between-views)
+    - [Automatically adjust poller speed on page visibility change](#automatically-adjust-poller-speed-on-page-visibility-change)
 - [Supported Angular versions](#supported-angular-versions)
 - [License](#license)
 
@@ -172,7 +173,7 @@ var myPoller = poller.get(myTarget, {
     catchError: true
 });
 
-myPoller.promise.then(null, null, function (result) {
+myPoller.promise.then(null, null, function(result) {
 
     // If catchError is set to true, this notifyCallback can contain either
     // a success or an error response.
@@ -193,10 +194,10 @@ myPoller.promise.then(null, null, function (result) {
 Alternatively you can use AngularJS `interceptors` for global error handling like so:
 ```javascript
 angular.module('myApp', ['emguo.poller'])
-    .config(function ($httpProvider) {
-        $httpProvider.interceptors.push(function ($q, poller) {
+    .config(function($httpProvider) {
+        $httpProvider.interceptors.push(function($q, poller) {
             return {
-                'responseError': function (rejection) {
+                'responseError': function(rejection) {
                     if (rejection.status === 503) {
                         // Stop poller or provide visual feedback to the user etc
                         poller.stopAll();
@@ -242,7 +243,7 @@ myModule.controller('myController', function($scope, poller) {
 // Inject angular poller service.
 var myModule = angular.module('myApp', ['emguo.poller']);
 
-myModule.factory('myTarget', function () {
+myModule.factory('myTarget', function() {
     // return $resource object, Restangular object or $http url.
     return ...;
 });
@@ -285,7 +286,7 @@ You can also use `pollerConfig` to set `smart` globally for all pollers.
 ```javascript
 var myModule = angular.module('myApp', ['emguo.poller']);
 
-myModule.config(function (pollerConfig) {
+myModule.config(function(pollerConfig) {
     pollerConfig.smart = true;
 });
 ```
@@ -301,7 +302,7 @@ poller on calling `poller.get` like so:
 ```javascript
 var myModule = angular.module('myApp', ['emguo.poller']);
 
-myModule.config(function (pollerConfig) {
+myModule.config(function(pollerConfig) {
     pollerConfig.neverOverwrite = true;
 });
 ```
@@ -311,7 +312,7 @@ In order to automatically stop all pollers when navigating between views with mu
 ```javascript
 var myModule = angular.module('myApp', ['emguo.poller']);
 
-myModule.config(function (pollerConfig) {
+myModule.config(function(pollerConfig) {
     pollerConfig.stopOn = '$stateChangeStart'; // If you use ui-router.
     pollerConfig.stopOn = '$routeChangeStart'; // If you use ngRoute.
 });
@@ -324,38 +325,27 @@ It empties poller registry in addition to stopping all pollers. It means `poller
 ```javascript
 var myModule = angular.module('myApp', ['emguo.poller']);
 
-myModule.config(function (pollerConfig) {
+myModule.config(function(pollerConfig) {
     pollerConfig.resetOn = '$stateChangeStart'; // If you use ui-router.
     pollerConfig.resetOn = '$routeChangeStart'; // If you use ngRoute.
 });
 ```
 You also have the option to set `pollerConfig.resetOn` to `$stateChangeSuccess` or `$routeChangeSuccess`.
 
-### Automatically switch to longer delay when page visibility changes
-You can also use `pollerConfig` to automatically switch interval delay for all pollers that you set `idleDelay` property.
+### Automatically adjust poller speed on page visibility change
+Use the `handleVisibilityChange` option to automatically slow down poller delay to `idleDelay` when page is hidden.
+By default `idleDelay` is set to 10 seconds.
 ```javascript
 var myModule = angular.module('myApp', ['emguo.poller']);
 
-myModule.config(function (pollerConfig) {
-    pollerConfig.delayOnVisibilityChange = true;
+myModule.config(function(pollerConfig) {
+    pollerConfig.handleVisibilityChange = true;
 });
 
-myModule.controller('controller', function (poller) {
-    var myPoller = poller.get('/progress', {
-        delay: 5000,
-        idleDelay: 10000
+myModule.controller('myController', function(poller) {
+    poller.get(myTarget, {
+        idleDelay: 20000 // Default value is 10000
     });
-});
-```
-
-### Automatically stop all pollers when page visibility changes
-You can also use `pollerConfig` to automatically stop all pollers when page loses visibility, and start all pollers again
-once page gains visibility.
-```javascript
-var myModule = angular.module('myApp', ['emguo.poller']);
-
-myModule.config(function (pollerConfig) {
-    pollerConfig.stopOnVisibilityChange = true;
 });
 ```
 

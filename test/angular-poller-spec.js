@@ -52,6 +52,7 @@ describe('emguo.poller', function() {
                     }
                 ],
                 delay: 6000,
+                idleDelay: 15000,
                 smart: true,
                 catchError: true
             });
@@ -86,6 +87,19 @@ describe('emguo.poller', function() {
 
         it('should have customized delay if it is specified.', function() {
             expect(poller2).to.have.property('delay').to.equal(6000);
+        });
+
+        it('should keep a copy of delay in normalDelay.', function() {
+            expect(poller1).to.have.property('normalDelay').to.equal(5000);
+            expect(poller2).to.have.property('normalDelay').to.equal(6000);
+        });
+
+        it('should have default idleDelay property - 10000.', function() {
+            expect(poller1).to.have.property('idleDelay').to.equal(10000);
+        });
+
+        it('should have customized idleDelay if it is specified.', function() {
+            expect(poller2).to.have.property('idleDelay').to.equal(15000);
         });
 
         it('should have default argumentsArray property - empty array.', function() {
@@ -493,17 +507,7 @@ describe('emguo.poller', function() {
                 expect(anotherPoller.delay).to.equal(1000);
             });
 
-            it('should always set (and overwrite) normalDelay same as delay.', function() {
-                anotherPoller = poller.get(target, {delay: 1000});
-                expect(anotherPoller.normalDelay).to.exist();
-                expect(anotherPoller.normalDelay).to.equal(anotherPoller.delay);
-
-                poller.get(target, {delay: 3000});
-                expect(anotherPoller.normalDelay).to.exist();
-                expect(anotherPoller.normalDelay).to.equal(anotherPoller.delay);
-            });
-
-            it('should not modify delay property if it is not re-defined.', function () {
+            it('should not modify delay property if it is not re-defined.', function() {
                 anotherPoller = poller.get(target);
                 expect(anotherPoller.delay).to.equal(8000);
             });
@@ -588,12 +592,30 @@ describe('emguo.poller', function() {
             expect(poller2.interval).to.equal(undefined);
             expect(poller.size()).to.equal(0);
         });
+
+        it('should increase all poller delay to idleDelay on invoking delayAll().', function() {
+            expect(poller1.delay).to.equal(5000);
+            expect(poller2.delay).to.equal(5000);
+            poller.delayAll();
+            expect(poller1.delay).to.equal(10000);
+            expect(poller2.delay).to.equal(10000);
+        });
+
+        it('should reset all poller delay to normalDelay on invoking resetDelay().', function() {
+            poller.delayAll();
+            expect(poller1.delay).to.equal(10000);
+            expect(poller2.delay).to.equal(10000);
+            poller.resetDelay();
+            expect(poller1.delay).to.equal(5000);
+            expect(poller2.delay).to.equal(5000);
+        });
     });
 });
 
 describe('emguo.poller PollerConfig', function() {
     var $rootScope;
     var $resource;
+    var $document;
     var poller;
     var spy;
     var anotherSpy;
@@ -606,6 +628,7 @@ describe('emguo.poller PollerConfig', function() {
         inject(function($injector) {
             $rootScope = $injector.get('$rootScope');
             $resource = $injector.get('$resource');
+            $document = $injector.get('$document');
             poller = $injector.get('poller');
         });
     }
@@ -767,28 +790,22 @@ describe('emguo.poller PollerConfig', function() {
         expect(poller.get('/test2').smart).to.equal(true);
     });
 
-    it('should switch delay of all pollers that have idleDelay on visibilitychange.', function () {
-        module(function ($provide) {
+    it('should adjust all pollers speed on page visibility change.', function() {
+        module(function($provide) {
             $provide.constant('pollerConfig', {
-                delayOnVisibilityChange: true
+                handleVisibilityChange: true
             });
         });
+        instantiate();
 
-        inject(function (_$resource_, _poller_) {
-            $resource = _$resource_;
-            poller = _poller_;
-        });
+        spy = sinon.spy(poller, 'delayAll');
+        $document[0].hidden = true;
+        $document.triggerHandler('visibilitychange');
+        expect(spy).to.have.callCount(1);
 
-        var target = $resource('/users');
-        var myPoller = poller.get(target, {
-            delay: 5000,
-            idleDelay: 10000
-        });
-
-        poller.delayAll();
-        expect(myPoller.delay).to.equal(myPoller.idleDelay);
-
-        poller.resetDelay();
-        expect(myPoller.delay).to.equal(myPoller.normalDelay);
+        anotherSpy = sinon.spy(poller, 'resetDelay');
+        $document[0].hidden = false;
+        $document.triggerHandler('visibilitychange');
+        expect(anotherSpy).to.have.callCount(1);
     });
 });

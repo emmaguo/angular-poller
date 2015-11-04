@@ -41,8 +41,7 @@
             resetOn: null,
             smart: false,
             neverOverwrite: false,
-            delayOnVisibilityChange: false,
-            stopOnVisibilityChange: false
+            handleVisibilityChange: false
         })
 
         .run([
@@ -87,37 +86,21 @@
                     );
                 }
 
-                var isPageHidden = function () {
-                    return document.hidden || document.webkitHidden || document.mozHidden || document.msHidden;
-                };
-
                 /**
-                 * delayAll/resetDelay or stopAll/startAll on visibilitychange.
+                 * Automatically increase or decrease poller speed on page
+                 * visibility change.
                  */
-                if (pollerConfig.delayOnVisibilityChange) {
-                    var handleDelayOnVisibilityChange = function () {
-                        if (isPageHidden()) {
-                            poller.delayAll();
-                        } else {
-                            poller.resetDelay();
-                        }
-                    };
-
-                    handleDelayOnVisibilityChange();
-                    $document.on('visibilitychange', handleDelayOnVisibilityChange);
+                function delayOnVisibilityChange() {
+                    if ($document[0].hidden) {
+                        poller.delayAll();
+                    } else {
+                        poller.resetDelay();
+                    }
                 }
 
-                if (pollerConfig.stopOnVisibilityChange) {
-                    var handleStopOnVisibilityChange = function () {
-                        if (isPageHidden()) {
-                            poller.stopAll();
-                        } else {
-                            poller.startAll();
-                        }
-                    };
-
-                    handleStopOnVisibilityChange();
-                    $document.on('visibilitychange', handleStopOnVisibilityChange);
+                if (pollerConfig.handleVisibilityChange) {
+                    delayOnVisibilityChange();
+                    $document.on('visibilitychange', delayOnVisibilityChange);
                 }
             }
         ])
@@ -146,15 +129,16 @@
 
                 /**
                  * Poller model:
-                 *  - target (can be $resource object, or Restangular object,
-                 *    or $http url)
+                 *  - target: can be $resource object, or Restangular object,
+                 *    or $http url
                  *  - action
                  *  - argumentsArray
                  *  - delay
-                 *  - smart (indicates whether poller should only send new
-                 *    request if the previous one is resolved)
-                 *  - catchError (indicates whether poller should get notified
-                 *    of error responses)
+                 *  - idleDelay: a bigger polling interval if page is hidden
+                 *  - smart: indicates whether poller should only send new
+                 *    request if the previous one is resolved
+                 *  - catchError: indicates whether poller should get notified
+                 *    of error responses
                  *  - promise
                  *  - interval
                  *
@@ -188,14 +172,14 @@
                 }
 
                 /**
-                 * Set poller action, argumentsArray, delay, smart and
-                 * catchError flags.
+                 * Set poller action, argumentsArray, delay, normalDelay,
+                 * idleDelay, smart and catchError flags.
                  *
                  * If options.action is defined, then set poller action to
                  * options.action, else if poller.action is undefined, then
-                 * set it to defaults.action, else do nothing.
-                 * The same goes for poller.argumentsArray, poller.delay,
-                 * poller.smart and poller.catchError.
+                 * set it to defaults.action, else do nothing. The same goes
+                 * for argumentsArray, delay, idleDelay, smart and catchError.
+                 * Also keep a copy of delay in normalDelay.
                  *
                  * @param options
                  */
@@ -204,7 +188,6 @@
                         'action',
                         'argumentsArray',
                         'delay',
-                        'normalDelay',
                         'idleDelay',
                         'smart',
                         'catchError'
@@ -213,12 +196,12 @@
                     angular.forEach(props, function(prop) {
                         if (options && options[prop]) {
                             this[prop] = options[prop];
-                        } else if (prop === 'normalDelay') {
-                            this[prop] = this.delay;
-                        } else if (!this[prop] && prop !== 'idleDelay') {
+                        } else if (!this[prop]) {
                             this[prop] = defaults[prop];
                         }
                     }, this);
+
+                    this.normalDelay = this.delay;
                 };
 
                 /**
@@ -366,15 +349,6 @@
                     },
 
                     /**
-                     * Start all poller services.
-                     */
-                    startAll: function () {
-                        angular.forEach(pollers, function (p) {
-                            p.start();
-                        });
-                    },
-
-                    /**
                      * Stop all poller services.
                      */
                     stopAll: function() {
@@ -393,7 +367,7 @@
                     },
 
                     /**
-                     * Stop and remove all poller services
+                     * Stop and remove all poller services.
                      */
                     reset: function() {
                         this.stopAll();
@@ -401,26 +375,22 @@
                     },
 
                     /**
-                     * Switch all poller services delay to idleDelay
+                     * Increase all poller interval to idleDelay.
                      */
                     delayAll: function() {
-                        angular.forEach(pollers, function (p) {
-                            if (angular.isDefined(p.idleDelay)) {
-                                p.delay = p.idleDelay;
-                                p.restart();
-                            }
+                        angular.forEach(pollers, function(p) {
+                            p.delay = p.idleDelay;
+                            p.restart();
                         });
                     },
 
                     /**
-                     * Switch all poller services delay back to normalDelay
+                     * Reset all poller interval back to its original delay.
                      */
                     resetDelay: function() {
-                        angular.forEach(pollers, function (p) {
-                            if (angular.isDefined(p.idleDelay)) {
-                                p.delay = p.normalDelay;
-                                p.restart();
-                            }
+                        angular.forEach(pollers, function(p) {
+                            p.delay = p.normalDelay;
+                            p.restart();
                         });
                     }
                 };
