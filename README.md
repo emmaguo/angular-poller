@@ -28,10 +28,10 @@ Demo site: http://emmaguo.github.io/angular-poller/
 
 ## Install
 
-Install with `bower`:
+Install with [bower](https://github.com/bower/bower):
 
 ```shell
-bower install angular-poller
+bower install angular-poller --save
 ```
 
 Add a `<script>` to your `index.html`:
@@ -42,7 +42,7 @@ Add a `<script>` to your `index.html`:
 
 Or use [cdnjs](https://cdnjs.com/libraries/angular-poller) files:
 ```html
-<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.4.0/angular-poller.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.4.1/angular-poller.js"></script>
 ```
 
 ## Quick configuration
