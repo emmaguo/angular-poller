@@ -1,5 +1,5 @@
 {
-    "name": "angularpoller",
+    "name": "angular-poller",
     "main": "angular-poller.min.js",
     "version": "0.4.0",
     "description": "Poller service for AngularJS",
