@@ -1,13 +1,12 @@
 {
     "name": "angular-poller",
     "main": "angular-poller.min.js",
-    "version": "0.4.0",
-    "description": "Poller service for AngularJS",
+    "description": "Lightweight AngularJS poller service",
     "homepage": "https://github.com/emmaguo/angular-poller.git",
-    "author": {
-        "name": "Emma Guo",
-        "email": "emmahongguo@gmail.com"
-    },
+    "license": "MIT",
+    "authors": [
+        "Emma Guo <emmahongguo@gmail.com>"
+    ],
     "ignore": [
         "*",
         "!angular-poller.js",
@@ -27,7 +26,7 @@
         "angular",
         "poller",
         "poller-service",
-        "angular-poller"
-    ],
-    "license": "MIT"
+        "angular-poller",
+        "angularpoller"
+    ]
 }
