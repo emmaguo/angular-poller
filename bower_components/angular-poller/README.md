@@ -1,7 +1,8 @@
 # Angular Poller
-[![Build Status](https://travis-ci.org/emmaguo/angular-poller.svg)](https://travis-ci.org/emmaguo/angular-poller)
-[![Coverage Status](https://img.shields.io/coveralls/emmaguo/angular-poller.svg)](https://coveralls.io/r/emmaguo/angular-poller?branch=master)
-[![devDependency Status](https://david-dm.org/emmaguo/angular-poller/dev-status.svg?theme=shields.io)](https://david-dm.org/emmaguo/angular-poller#info=devDependencies)
+[![Build Status](https://travis-ci.org/emmaguo/angular-poller.svg?branch=master)](https://travis-ci.org/emmaguo/angular-poller)
+[![Coverage Status](https://coveralls.io/repos/emmaguo/angular-poller/badge.svg?branch=master)](https://coveralls.io/r/emmaguo/angular-poller?branch=master)
+[![devDependency Status](https://david-dm.org/emmaguo/angular-poller/dev-status.svg)](https://david-dm.org/emmaguo/angular-poller#info=devDependencies)
+[![Bower version](https://badge.fury.io/bo/angular-poller.svg)](https://badge.fury.io/bo/angular-poller)
 
 Lightweight [AngularJS](http://angularjs.org/) poller service which can be easily injected into controllers. It uses a timer and sends requests every few seconds to keep the client synced with the server. Angular Poller supports `$resource`, `$http` and `Restangular`.
 
@@ -21,15 +22,16 @@ Demo site: http://emmaguo.github.io/angular-poller/
 	- [Always create new poller on calling poller.get](#always-create-new-poller-on-calling-pollerget)
     - [Automatically stop all pollers when navigating between views](#automatically-stop-all-pollers-when-navigating-between-views)
     - [Automatically reset all pollers when navigating between views](#automatically-reset-all-pollers-when-navigating-between-views)
+    - [Automatically adjust poller speed on page visibility change](#automatically-adjust-poller-speed-on-page-visibility-change)
 - [Supported Angular versions](#supported-angular-versions)
 - [License](#license)
 
 ## Install
 
-Install with `bower`:
+Install with [bower](https://github.com/bower/bower):
 
 ```shell
-bower install angular-poller
+bower install angular-poller --save
 ```
 
 Add a `<script>` to your `index.html`:
@@ -40,7 +42,7 @@ Add a `<script>` to your `index.html`:
 
 Or use [cdnjs](https://cdnjs.com/libraries/angular-poller) files:
 ```html
-<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.3.1/angular-poller.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.4.1/angular-poller.js"></script>
 ```
 
 ## Quick configuration
@@ -66,6 +68,9 @@ myModule.controller('myController', function($scope, $resource, poller) {
 
     // Restart poller.
     myPoller.restart();
+
+    // Remove poller.
+    myPoller.remove();
 });
 ```
 
@@ -169,7 +174,7 @@ var myPoller = poller.get(myTarget, {
     catchError: true
 });
 
-myPoller.promise.then(null, null, function (result) {
+myPoller.promise.then(null, null, function(result) {
 
     // If catchError is set to true, this notifyCallback can contain either
     // a success or an error response.
@@ -190,10 +195,10 @@ myPoller.promise.then(null, null, function (result) {
 Alternatively you can use AngularJS `interceptors` for global error handling like so:
 ```javascript
 angular.module('myApp', ['emguo.poller'])
-    .config(function ($httpProvider) {
-        $httpProvider.interceptors.push(function ($q, poller) {
+    .config(function($httpProvider) {
+        $httpProvider.interceptors.push(function($q, poller) {
             return {
-                'responseError': function (rejection) {
+                'responseError': function(rejection) {
                     if (rejection.status === 503) {
                         // Stop poller or provide visual feedback to the user etc
                         poller.stopAll();
@@ -239,7 +244,7 @@ myModule.controller('myController', function($scope, poller) {
 // Inject angular poller service.
 var myModule = angular.module('myApp', ['emguo.poller']);
 
-myModule.factory('myTarget', function () {
+myModule.factory('myTarget', function() {
     // return $resource object, Restangular object or $http url.
     return ...;
 });
@@ -277,6 +282,16 @@ var myPoller = poller.get(myTarget, {
 });
 ```
 
+You can also use `pollerConfig` to set `smart` globally for all pollers.
+
+```javascript
+var myModule = angular.module('myApp', ['emguo.poller']);
+
+myModule.config(function(pollerConfig) {
+    pollerConfig.smart = true;
+});
+```
+
 ### Always create new poller on calling `poller.get`
 By default `poller.get(target, ...)` looks for any existing poller by `target` in poller registry. If found, it overwrites
 existing poller with new parameters such as `action`, `delay`, `argumentsArray` etc if specified, and then restarts the poller.
@@ -288,7 +303,7 @@ poller on calling `poller.get` like so:
 ```javascript
 var myModule = angular.module('myApp', ['emguo.poller']);
 
-myModule.config(function (pollerConfig) {
+myModule.config(function(pollerConfig) {
     pollerConfig.neverOverwrite = true;
 });
 ```
@@ -298,11 +313,12 @@ In order to automatically stop all pollers when navigating between views with mu
 ```javascript
 var myModule = angular.module('myApp', ['emguo.poller']);
 
-myModule.config(function (pollerConfig) {
-    pollerConfig.stopOnStateChange = true; // If you use $stateProvider from ui-router.
-    pollerConfig.stopOnRouteChange = true; // If you use $routeProvider from ngRoute.
+myModule.config(function(pollerConfig) {
+    pollerConfig.stopOn = '$stateChangeStart'; // If you use ui-router.
+    pollerConfig.stopOn = '$routeChangeStart'; // If you use ngRoute.
 });
 ```
+You also have the option to set `pollerConfig.stopOn` to `$stateChangeSuccess` or `$routeChangeSuccess`.
 
 ### Automatically reset all pollers when navigating between views
 You can also use `pollerConfig` to automatically reset all pollers when navigating between views with multiple controllers.
@@ -310,21 +326,39 @@ It empties poller registry in addition to stopping all pollers. It means `poller
 ```javascript
 var myModule = angular.module('myApp', ['emguo.poller']);
 
-myModule.config(function (pollerConfig) {
-    pollerConfig.resetOnStateChange = true; // If you use $stateProvider from ui-router.
-    pollerConfig.resetOnRouteChange = true; // If you use $routeProvider from ngRoute.
+myModule.config(function(pollerConfig) {
+    pollerConfig.resetOn = '$stateChangeStart'; // If you use ui-router.
+    pollerConfig.resetOn = '$routeChangeStart'; // If you use ngRoute.
+});
+```
+You also have the option to set `pollerConfig.resetOn` to `$stateChangeSuccess` or `$routeChangeSuccess`.
+
+### Automatically adjust poller speed on page visibility change
+Use the `handleVisibilityChange` option to automatically slow down poller delay to `idleDelay` when page is hidden.
+By default `idleDelay` is set to 10 seconds.
+```javascript
+var myModule = angular.module('myApp', ['emguo.poller']);
+
+myModule.config(function(pollerConfig) {
+    pollerConfig.handleVisibilityChange = true;
+});
+
+myModule.controller('myController', function(poller) {
+    poller.get(myTarget, {
+        idleDelay: 20000 // Default value is 10000
+    });
 });
 ```
 
 ## Supported Angular versions
 
-Angular Poller supports Angular 1.2.0 - 1.3.x.
+Angular Poller supports Angular 1.2.0 - 1.4.x.
 
 ## License
 
 The MIT License (MIT)
 
-Copyright (c) 2013-2014 Emma Guo
+Copyright (c) 2013-2015 Emma Guo
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
