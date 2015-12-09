@@ -2,6 +2,7 @@
     "name": "angular-poller",
     "license": "MIT",
     "version": "0.4.1",
+    "main": "angular-poller.js",
     "dependencies": {},
     "devDependencies": {
         "chai": "^3.3.0",
