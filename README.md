@@ -1,6 +1,6 @@
 # Angular Poller
 [![Build Status](https://travis-ci.org/emmaguo/angular-poller.svg?branch=master)](https://travis-ci.org/emmaguo/angular-poller)
-[![Coverage Status](https://coveralls.io/repos/emmaguo/angular-poller/badge.svg?branch=master)](https://coveralls.io/r/emmaguo/angular-poller?branch=master)
+[![Coverage Status](https://coveralls.io/repos/emmaguo/angular-poller/badge.svg?branch=master&service=github)](https://coveralls.io/github/emmaguo/angular-poller?branch=master)
 [![devDependency Status](https://david-dm.org/emmaguo/angular-poller/dev-status.svg)](https://david-dm.org/emmaguo/angular-poller#info=devDependencies)
 [![Bower version](https://badge.fury.io/bo/angular-poller.svg)](https://badge.fury.io/bo/angular-poller)
 
@@ -28,10 +28,16 @@ Demo site: http://emmaguo.github.io/angular-poller/
 
 ## Install
 
-Install with [bower](https://github.com/bower/bower):
+Install via [Bower](http://bower.io/):
 
 ```shell
-bower install angular-poller --save
+bower install angular-poller
+```
+
+Install via [npm](https://www.npmjs.com/):
+
+```shell
+npm install angular-poller
 ```
 
 Add a `<script>` to your `index.html`:
