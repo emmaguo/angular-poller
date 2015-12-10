@@ -1,5 +1,6 @@
 {
     "name": "angular-poller",
+    "description": "Lightweight AngularJS poller service",
     "license": "MIT",
     "version": "0.4.1",
     "main": "angular-poller.js",
