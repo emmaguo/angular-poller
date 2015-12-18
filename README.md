@@ -12,17 +12,18 @@ Demo site: http://emmaguo.github.io/angular-poller/
 - [Install](#install)
 - [Quick configuration](#quick-configuration)
 - [Advanced usage](#advanced-usage)
-	- [Customize $resource poller](#customize-resource-poller)
+    - [Customize $resource poller](#customize-resource-poller)
     - [Customize $http poller](#customize-http-poller)
     - [Customize Restangular poller](#customize-restangular-poller)
-	- [Error handling](#error-handling)
-	- [Multiple pollers](#multiple-pollers)
-	- [Multiple controllers](#multiple-controllers)
-	- [Only send new request if the previous one is resolved](#only-send-new-request-if-the-previous-one-is-resolved)
-	- [Always create new poller on calling poller.get](#always-create-new-poller-on-calling-pollerget)
+    - [Error handling](#error-handling)
+    - [Multiple pollers](#multiple-pollers)
+    - [Multiple controllers](#multiple-controllers)
+    - [Only send new request if the previous one is resolved](#only-send-new-request-if-the-previous-one-is-resolved)
+    - [Always create new poller on calling poller.get](#always-create-new-poller-on-calling-pollerget)
     - [Automatically stop all pollers when navigating between views](#automatically-stop-all-pollers-when-navigating-between-views)
     - [Automatically reset all pollers when navigating between views](#automatically-reset-all-pollers-when-navigating-between-views)
     - [Automatically adjust poller speed on page visibility change](#automatically-adjust-poller-speed-on-page-visibility-change)
+- [Change log](#change-log)
 - [Supported Angular versions](#supported-angular-versions)
 - [License](#license)
 
@@ -355,6 +356,10 @@ myModule.controller('myController', function(poller) {
     });
 });
 ```
+
+## Change log
+
+https://github.com/emmaguo/angular-poller/releases
 
 ## Supported Angular versions
 
