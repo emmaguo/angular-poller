@@ -6,7 +6,7 @@
 
 Lightweight [AngularJS](http://angularjs.org/) poller service which can be easily injected into controllers. It uses a timer and sends requests every few seconds to keep the client synced with the server. Angular Poller supports `$resource`, `$http` and `Restangular`.
 
-Demo site: http://emmaguo.github.io/angular-poller/
+Demo: http://emmaguo.github.io/angular-poller/
 
 ## Table of contents
 - [Install](#install)
@@ -23,7 +23,7 @@ Demo site: http://emmaguo.github.io/angular-poller/
     - [Automatically stop all pollers when navigating between views](#automatically-stop-all-pollers-when-navigating-between-views)
     - [Automatically reset all pollers when navigating between views](#automatically-reset-all-pollers-when-navigating-between-views)
     - [Automatically adjust poller speed on page visibility change](#automatically-adjust-poller-speed-on-page-visibility-change)
-- [Change log](#change-log)
+- [Changelog](#changelog)
 - [Supported Angular versions](#supported-angular-versions)
 - [License](#license)
 
@@ -357,7 +357,7 @@ myModule.controller('myController', function(poller) {
 });
 ```
 
-## Change log
+## Changelog
 
 https://github.com/emmaguo/angular-poller/releases
 
