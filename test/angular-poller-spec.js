@@ -31,7 +31,7 @@ describe('emguo.poller', function() {
             // Basic poller
             target1 = $resource('/admin');
             $httpBackend.expect('GET', '/admin').respond(
-                {id: 1, name: 'Alice'}
+                { id: 1, name: 'Alice' }
             );
             poller1 = poller.get(target1);
             poller1.promise.then(null, null, function(data) {
@@ -41,8 +41,8 @@ describe('emguo.poller', function() {
             // Advanced poller
             target2 = $resource('/users');
             $httpBackend.expect('GET', '/users?group=1').respond([
-                {id: 1, name: 'Alice'},
-                {id: 2, name: 'Bob'}
+                { id: 1, name: 'Alice' },
+                { id: 2, name: 'Bob' }
             ]);
             poller2 = poller.get(target2, {
                 action: 'query',
@@ -108,7 +108,7 @@ describe('emguo.poller', function() {
         });
 
         it('should have customized argumentsArray if it is specified.', function() {
-            expect(poller2.argumentsArray[0]).to.deep.equal({group: 1});
+            expect(poller2.argumentsArray[0]).to.deep.equal({ group: 1 });
         });
 
         it('should have default smart flag set to false.', function() {
@@ -146,7 +146,7 @@ describe('emguo.poller', function() {
 
         it('should ignore success response if request is sent before stop() is invoked', function() {
             poller2.stop();
-            $httpBackend.expect('GET', '/admin').respond({id: 2, name: 'Bob'});
+            $httpBackend.expect('GET', '/admin').respond({ id: 2, name: 'Bob' });
 
             // Request at t = 5000 ms.
             $interval.flush(5000);
@@ -195,7 +195,7 @@ describe('emguo.poller', function() {
         it('should restart currently running poller on invoking restart().', function() {
             var intervalId = poller1.interval.$$intervalId;
 
-            $httpBackend.expect('GET', '/admin').respond({id: 2, name: 'Bob'});
+            $httpBackend.expect('GET', '/admin').respond({ id: 2, name: 'Bob' });
             poller1.restart();
             $httpBackend.flush(1);
 
@@ -208,7 +208,7 @@ describe('emguo.poller', function() {
             poller1.stop();
             expect(poller1.interval).to.equal(undefined);
 
-            $httpBackend.expect('GET', '/admin').respond({id: 2, name: 'Bob'});
+            $httpBackend.expect('GET', '/admin').respond({ id: 2, name: 'Bob' });
             poller1.restart();
             $httpBackend.flush(1);
 
@@ -228,7 +228,7 @@ describe('emguo.poller', function() {
         it('should send request every (delay) milliseconds if smart flag is set to false.', function() {
             poller2.stop();
             $httpBackend.expect('GET', '/admin').respond(null);
-            $httpBackend.expect('GET', '/admin').respond({id: 3, name: 'Emma'});
+            $httpBackend.expect('GET', '/admin').respond({ id: 3, name: 'Emma' });
 
             // 5000 + 5000 + 100
             $interval.flush(10100);
@@ -241,9 +241,9 @@ describe('emguo.poller', function() {
         it('should only send new request if the previous one is resolved if smart flag is set to true', function() {
             poller1.stop();
             $httpBackend.expect('GET', '/users?group=1').respond([
-                {id: 1, name: 'Alice'},
-                {id: 2, name: 'Bob'},
-                {id: 3, name: 'Emma'}
+                { id: 1, name: 'Alice' },
+                { id: 2, name: 'Bob' },
+                { id: 3, name: 'Emma' }
             ]);
 
             // 6000 + 6000 + 100
@@ -287,9 +287,9 @@ describe('emguo.poller', function() {
             expect(result2.data).to.equal('Service Unavailable');
 
             $httpBackend.expect('GET', '/users?group=1').respond([
-                {id: 1, name: 'Alice'},
-                {id: 2, name: 'Bob'},
-                {id: 3, name: 'Emma'}
+                { id: 1, name: 'Alice' },
+                { id: 2, name: 'Bob' },
+                { id: 3, name: 'Emma' }
             ]);
 
             // 6000 + 100
@@ -493,7 +493,7 @@ describe('emguo.poller', function() {
             });
 
             it('should overwrite poller.action if it is re-defined.', function() {
-                anotherPoller = poller.get(target, {action: 'get'});
+                anotherPoller = poller.get(target, { action: 'get' });
                 expect(anotherPoller.action).to.equal('get');
             });
 
@@ -503,7 +503,7 @@ describe('emguo.poller', function() {
             });
 
             it('should overwrite poller.delay if it is re-defined.', function() {
-                anotherPoller = poller.get(target, {delay: 1000});
+                anotherPoller = poller.get(target, { delay: 1000 });
                 expect(anotherPoller.delay).to.equal(1000);
             });
 
@@ -513,17 +513,17 @@ describe('emguo.poller', function() {
             });
 
             it('should overwrite poller.argumentsArray if it is re-defined.', function() {
-                anotherPoller = poller.get(target, {argumentsArray: []});
+                anotherPoller = poller.get(target, { argumentsArray: [] });
                 expect(anotherPoller.argumentsArray.length).to.equal(0);
             });
 
             it('should not modify argumentsArray property if it is not re-defined.', function() {
                 anotherPoller = poller.get(target);
-                expect(anotherPoller.argumentsArray[0]).to.deep.equal({group: 1});
+                expect(anotherPoller.argumentsArray[0]).to.deep.equal({ group: 1 });
             });
 
             it('should overwrite poller.smart if it is re-defined.', function() {
-                anotherPoller = poller.get(target, {smart: true});
+                anotherPoller = poller.get(target, { smart: true });
                 expect(anotherPoller.smart).to.equal(true);
             });
 
@@ -533,7 +533,7 @@ describe('emguo.poller', function() {
             });
 
             it('should overwrite poller.catchError if it is re-defined.', function() {
-                anotherPoller = poller.get(target, {catchError: true});
+                anotherPoller = poller.get(target, { catchError: true });
                 expect(anotherPoller.catchError).to.equal(true);
             });
 
