@@ -248,7 +248,7 @@
 
                             timestamp = new Date();
                             current =
-                                target[action].apply(self, argumentsArray);
+                                target[action].apply(target, argumentsArray);
                             current.$resolved = false;
 
                             /**
