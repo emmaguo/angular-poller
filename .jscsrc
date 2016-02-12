@@ -4,6 +4,9 @@
     "validateIndentation": 4,
     "requireTrailingComma": false,
     "safeContextKeyword": "self",
+    "requireSpacesInAnonymousFunctionExpression": {
+        "beforeOpeningRoundBrace": false
+    },
     "requirePaddingNewLinesAfterBlocks": {
         "allExcept": [
             "inCallExpressions"
