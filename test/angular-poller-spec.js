@@ -164,7 +164,8 @@ describe('emguo.poller', function() {
             expect(current - poller1.stopTimestamp).to.be.at.most(1);
         });
 
-        it('should ignore success response if request is sent before stop() is invoked', function() {
+        it('should ignore success response if request is sent before stop() ' +
+            'is invoked', function() {
             poller2.stop();
             $httpBackend.expect('GET', '/admin').respond({ id: 2, name: 'Bob' });
 
@@ -181,7 +182,8 @@ describe('emguo.poller', function() {
             expect(result1.name).to.equal('Alice');
         });
 
-        it('should ignore error response if request is sent before stop() is invoked', function() {
+        it('should ignore error response if request is sent before stop() is ' +
+            'invoked', function() {
             poller1.stop();
             $httpBackend.expect('GET', '/users?group=1').respond(
                 503,
@@ -204,7 +206,8 @@ describe('emguo.poller', function() {
             expect(result2[0].name).to.equal('Alice');
         });
 
-        it('should stop poller and remove it from poller registry on invoking remove().', function() {
+        it('should stop poller and remove it from poller registry on invoking ' +
+            'remove().', function() {
             var spy = sinon.spy(poller1, 'stop');
             expect(poller.size()).to.equal(2);
             poller1.remove();
@@ -245,7 +248,8 @@ describe('emguo.poller', function() {
             expect(result2[0].name).to.equal('Alice');
         });
 
-        it('should send request every (delay) milliseconds if smart flag is set to false.', function() {
+        it('should send request every (delay) milliseconds if smart flag is set to ' +
+            'false.', function() {
             poller2.stop();
             $httpBackend.expect('GET', '/admin').respond(null);
             $httpBackend.expect('GET', '/admin').respond({ id: 3, name: 'Emma' });
@@ -258,7 +262,8 @@ describe('emguo.poller', function() {
             expect(result1.name).to.equal('Emma');
         });
 
-        it('should only send new request if the previous one is resolved if smart flag is set to true', function() {
+        it('should only send new request if the previous one is resolved if smart ' +
+            'flag is set to true', function() {
             poller1.stop();
             $httpBackend.expect('GET', '/users?group=1').respond([
                 { id: 1, name: 'Alice' },
@@ -273,7 +278,8 @@ describe('emguo.poller', function() {
             expect(result2.length).to.equal(3);
         });
 
-        it('should only get notified of success responses if catchError flag is set to false.', function() {
+        it('should only get notified of success responses if catchError flag is set ' +
+            'to false.', function() {
             var previousResult = result1;
             poller2.stop();
             $httpBackend.expect('GET', '/admin').respond(
@@ -290,7 +296,8 @@ describe('emguo.poller', function() {
             expect(result1).to.equal(previousResult);
         });
 
-        it('should get notified of both success and error responses if catchError flag is set to true.', function() {
+        it('should get notified of both success and error responses if catchError ' +
+            'flag is set to true.', function() {
             poller1.stop();
             $httpBackend.expect('GET', '/users?group=1').respond(
                 503,
@@ -350,7 +357,8 @@ describe('emguo.poller', function() {
                 ]
             });
 
-            $httpBackend.expect('POST', '/admin?param1=1&param2=2', '{"data1":1}').respond({});
+            $httpBackend.expect('POST', '/admin?param1=1&param2=2', '{"data1":1}')
+                .respond({});
             $httpBackend.flush(1);
         });
     });
@@ -371,9 +379,11 @@ describe('emguo.poller', function() {
                 ]
             });
 
-            $httpBackend.expect('GET', '/admin/123?param1=1&param2=2', undefined, function(headers) {
-                return headers.header1 === 1;
-            }).respond([]);
+            $httpBackend.expect('GET', '/admin/123?param1=1&param2=2', undefined,
+                function(headers) {
+                    return headers.header1 === 1;
+                }
+            ).respond([]);
             $httpBackend.flush(1);
         });
 
@@ -391,9 +401,11 @@ describe('emguo.poller', function() {
                 ]
             });
 
-            $httpBackend.expect('GET', '/users?param1=1&param2=2', undefined, function(headers) {
-                return headers.header1 === 1;
-            }).respond([]);
+            $httpBackend.expect('GET', '/users?param1=1&param2=2', undefined,
+                function(headers) {
+                    return headers.header1 === 1;
+                }
+            ).respond([]);
             $httpBackend.flush(1);
         });
 
@@ -412,9 +424,11 @@ describe('emguo.poller', function() {
                 ]
             });
 
-            $httpBackend.expect('GET', '/admin/123/test?param1=1&param2=2', undefined, function(headers) {
-                return headers.header1 === 1;
-            }).respond([]);
+            $httpBackend.expect('GET', '/admin/123/test?param1=1&param2=2', undefined,
+                function(headers) {
+                    return headers.header1 === 1;
+                }
+            ).respond([]);
             $httpBackend.flush(1);
         });
     });
@@ -436,9 +450,11 @@ describe('emguo.poller', function() {
                 ]
             });
 
-            $httpBackend.expect('GET', '/admin?param1=1&param2=2', undefined, function(headers) {
-                return headers.header1 === 1;
-            }).respond({});
+            $httpBackend.expect('GET', '/admin?param1=1&param2=2', undefined,
+                function(headers) {
+                    return headers.header1 === 1;
+                }
+            ).respond({});
             $httpBackend.flush(1);
         });
 
@@ -461,9 +477,11 @@ describe('emguo.poller', function() {
                 ]
             });
 
-            $httpBackend.expect('POST', '/admin?param1=1&param2=2', '{"data1":1}', function(headers) {
-                return headers.header1 === 1;
-            }).respond({});
+            $httpBackend.expect('POST', '/admin?param1=1&param2=2', '{"data1":1}',
+                function(headers) {
+                    return headers.header1 === 1;
+                }
+            ).respond({});
             $httpBackend.flush(1);
         });
     });
@@ -669,7 +687,8 @@ describe('emguo.poller PollerConfig', function() {
         expect(anotherSpy).to.have.callCount(0);
     });
 
-    it('should stop all pollers on $routeChangeStart if pollerConfig.stopOn is set to $routeChangeStart.', function() {
+    it('should stop all pollers on $routeChangeStart if pollerConfig.stopOn is set to ' +
+        '$routeChangeStart.', function() {
         module(function($provide) {
             $provide.constant('pollerConfig', {
                 stopOn: '$routeChangeStart'
@@ -682,7 +701,8 @@ describe('emguo.poller PollerConfig', function() {
         expect(spy).to.have.callCount(1);
     });
 
-    it('should stop all pollers on $routeChangeSuccess if pollerConfig.stopOn is set to $routeChangeSuccess.', function() {
+    it('should stop all pollers on $routeChangeSuccess if pollerConfig.stopOn is set ' +
+        'to $routeChangeSuccess.', function() {
         module(function($provide) {
             $provide.constant('pollerConfig', {
                 stopOn: '$routeChangeSuccess'
@@ -695,7 +715,8 @@ describe('emguo.poller PollerConfig', function() {
         expect(spy).to.have.callCount(1);
     });
 
-    it('should stop all pollers on $stateChangeStart if pollerConfig.stopOn is set to $stateChangeStart.', function() {
+    it('should stop all pollers on $stateChangeStart if pollerConfig.stopOn is set ' +
+        'to $stateChangeStart.', function() {
         module(function($provide) {
             $provide.constant('pollerConfig', {
                 stopOn: '$stateChangeStart'
@@ -708,7 +729,8 @@ describe('emguo.poller PollerConfig', function() {
         expect(spy).to.have.callCount(1);
     });
 
-    it('should stop all pollers on $stateChangeSuccess if pollerConfig.stopOn is set to $stateChangeSuccess.', function() {
+    it('should stop all pollers on $stateChangeSuccess if pollerConfig.stopOn is set ' +
+        'to $stateChangeSuccess.', function() {
         module(function($provide) {
             $provide.constant('pollerConfig', {
                 stopOn: '$stateChangeSuccess'
@@ -721,7 +743,8 @@ describe('emguo.poller PollerConfig', function() {
         expect(spy).to.have.callCount(1);
     });
 
-    it('should reset all pollers on $routeChangeStart if pollerConfig.resetOn is set to $routeChangeStart.', function() {
+    it('should reset all pollers on $routeChangeStart if pollerConfig.resetOn is set ' +
+        'to $routeChangeStart.', function() {
         module(function($provide) {
             $provide.constant('pollerConfig', {
                 resetOn: '$routeChangeStart'
@@ -734,7 +757,8 @@ describe('emguo.poller PollerConfig', function() {
         expect(spy).to.have.callCount(1);
     });
 
-    it('should reset all pollers on $routeChangeSuccess if pollerConfig.resetOn is set to $routeChangeSuccess.', function() {
+    it('should reset all pollers on $routeChangeSuccess if pollerConfig.resetOn is set ' +
+        'to $routeChangeSuccess.', function() {
         module(function($provide) {
             $provide.constant('pollerConfig', {
                 resetOn: '$routeChangeSuccess'
@@ -747,7 +771,8 @@ describe('emguo.poller PollerConfig', function() {
         expect(spy).to.have.callCount(1);
     });
 
-    it('should reset all pollers on $stateChangeStart if pollerConfig.resetOn is set to $stateChangeStart.', function() {
+    it('should reset all pollers on $stateChangeStart if pollerConfig.resetOn is set ' +
+        'to $stateChangeStart.', function() {
         module(function($provide) {
             $provide.constant('pollerConfig', {
                 resetOn: '$stateChangeStart'
@@ -760,7 +785,8 @@ describe('emguo.poller PollerConfig', function() {
         expect(spy).to.have.callCount(1);
     });
 
-    it('should reset all pollers on $stateChangeSuccess if pollerConfig.resetOn is set to $stateChangeSuccess.', function() {
+    it('should reset all pollers on $stateChangeSuccess if pollerConfig.resetOn is set ' +
+        'to $stateChangeSuccess.', function() {
         module(function($provide) {
             $provide.constant('pollerConfig', {
                 resetOn: '$stateChangeSuccess'
