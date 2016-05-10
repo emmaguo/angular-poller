@@ -15,6 +15,7 @@ Demo: http://emmaguo.github.io/angular-poller/
     - [Customize $resource poller](#customize-resource-poller)
     - [Customize $http poller](#customize-http-poller)
     - [Customize Restangular poller](#customize-restangular-poller)
+    - [Update argumentsArray while poller is running](#update-argumentsarray-while-poller-is-running)
     - [Error handling](#error-handling)
     - [Multiple pollers](#multiple-pollers)
     - [Multiple controllers](#multiple-controllers)
@@ -173,6 +174,28 @@ myModule.controller('myController', function($scope, Restangular, poller) {
 });
 ```
 Angular Poller supports all [Restangular action methods](https://github.com/mgonto/restangular#methods-description). Here `argumentsArray` is exactly the same as the input arguments for the original method function. For instance the `argumentsArray` for element method `getList(subElement, [queryParams, headers])` would be `subElement, [queryParams, headers]`, and the `argumentsArray` for collection method `getList([queryParams, headers])` would be `[queryParams, headers]`, etc.
+
+### Update argumentsArray while poller is running
+To update `argumentsArray` without restarting poller, you can pass in `argumentsArray` as a function, which gets evaluated on every tick.
+```javascript
+var myPoller = poller.get(myResource, {
+    action: 'get',
+    delay: 6000,
+    argumentsArray: function() {
+        return [
+            {
+                param1: $scope.param1,
+                param2: $scope.param2
+            },
+            {
+                header1: 1
+            }
+        ]
+    }
+});
+
+myPoller.promise.then(null, null, callback);
+```
 
 ### Error handling
 One way to capture error responses is to use the `catchError` option. It indicates whether poller should get notified of error responses.

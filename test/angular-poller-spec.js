@@ -111,6 +111,26 @@ describe('emguo.poller', function() {
             expect(poller2.argumentsArray[0]).to.deep.equal({ group: 1 });
         });
 
+        it('should also support argumentsArray as a function', function() {
+            var foo = 1;
+            poller.get(target1, {
+                argumentsArray: function() {
+                    return [
+                        {
+                            id: foo
+                        }
+                    ];
+                }
+            });
+            $httpBackend.expect('GET', '/admin?id=1').respond({});
+            $httpBackend.flush(1);
+
+            foo = 2;
+            $httpBackend.expect('GET', '/admin?id=2').respond({});
+            $interval.flush(5000);
+            $httpBackend.flush(1);
+        });
+
         it('should have default smart flag set to false.', function() {
             expect(poller1).to.have.property('smart').to.equal(false);
         });
@@ -798,13 +818,15 @@ describe('emguo.poller PollerConfig', function() {
         });
         instantiate();
 
+        var stub = sinon.stub($document, 'prop');
+
         spy = sinon.spy(poller, 'delayAll');
-        $document[0].hidden = true;
+        stub.withArgs('hidden').returns(true);
         $document.triggerHandler('visibilitychange');
         expect(spy).to.have.callCount(1);
 
         anotherSpy = sinon.spy(poller, 'resetDelay');
-        $document[0].hidden = false;
+        stub.withArgs('hidden').returns(false);
         $document.triggerHandler('visibilitychange');
         expect(anotherSpy).to.have.callCount(1);
     });
