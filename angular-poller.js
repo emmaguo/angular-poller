@@ -380,22 +380,28 @@
                     },
 
                     /**
-                     * Increase all poller interval to idleDelay.
+                     * Increase all poller interval to idleDelay, and restart the ones
+                     * that are already running.
                      */
                     delayAll: function() {
                         angular.forEach(pollers, function(p) {
                             p.delay = p.idleDelay;
-                            p.restart();
+                            if (angular.isDefined(p.interval)) {
+                                p.restart();
+                            }
                         });
                     },
 
                     /**
-                     * Reset all poller interval back to its original delay.
+                     * Reset all poller interval back to its original delay, and restart
+                     * the ones that are already running.
                      */
                     resetDelay: function() {
                         angular.forEach(pollers, function(p) {
                             p.delay = p.normalDelay;
-                            p.restart();
+                            if (angular.isDefined(p.interval)) {
+                                p.restart();
+                            }
                         });
                     }
                 };

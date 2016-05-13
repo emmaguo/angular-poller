@@ -598,6 +598,8 @@ describe('emguo.poller', function() {
     describe('Actions', function() {
         var poller1;
         var poller2;
+        var intervalId1;
+        var intervalId2;
 
         beforeEach(function() {
             poller1 = poller.get($resource('/test1'));
@@ -615,8 +617,8 @@ describe('emguo.poller', function() {
         });
 
         it('should restart all poller services on invoking restartAll().', function() {
-            var intervalId1 = poller1.interval.$$intervalId;
-            var intervalId2 = poller2.interval.$$intervalId;
+            intervalId1 = poller1.interval.$$intervalId;
+            intervalId2 = poller2.interval.$$intervalId;
 
             poller.restartAll();
 
@@ -632,20 +634,30 @@ describe('emguo.poller', function() {
         });
 
         it('should increase all poller delay to idleDelay on invoking delayAll().', function() {
+            poller2.stop();
+            intervalId1 = poller1.interval.$$intervalId;
             expect(poller1.delay).to.equal(5000);
             expect(poller2.delay).to.equal(5000);
             poller.delayAll();
+
             expect(poller1.delay).to.equal(10000);
             expect(poller2.delay).to.equal(10000);
+            expect(poller1.interval.$$intervalId).to.not.equal(intervalId1);
+            expect(poller2.interval).to.equal(undefined);
         });
 
         it('should reset all poller delay to normalDelay on invoking resetDelay().', function() {
             poller.delayAll();
             expect(poller1.delay).to.equal(10000);
             expect(poller2.delay).to.equal(10000);
+            poller2.stop();
+            intervalId1 = poller1.interval.$$intervalId;
             poller.resetDelay();
+
             expect(poller1.delay).to.equal(5000);
             expect(poller2.delay).to.equal(5000);
+            expect(poller1.interval.$$intervalId).to.not.equal(intervalId1);
+            expect(poller2.interval).to.equal(undefined);
         });
     });
 });
