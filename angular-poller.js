@@ -238,7 +238,7 @@
                              * Restangular: typeof target === 'object'
                              * $http: typeof target === 'string'
                              */
-                            if (angular.isString(target)) {
+                            if (angular.isString(self.target)) {
 
                                 /**
                                  * Update argumentsArray and target for $http
@@ -247,7 +247,7 @@
                                  * $http.get(url, [config])
                                  * $http.post(url, data, [config])
                                  */
-                                argumentsArray.unshift(target);
+                                argumentsArray.unshift(self.target);
                                 target = $http;
                             }
 

@@ -341,6 +341,10 @@ describe('emguo.poller', function() {
 
             $httpBackend.expect('GET', '/admin?test1=1&test2=2').respond({});
             $httpBackend.flush(1);
+
+            $httpBackend.expect('GET', '/admin?test1=1&test2=2').respond({});
+            $interval.flush(5000);
+            $httpBackend.flush(1);
         });
 
         it('should make non-GET requests correctly.', function() {
@@ -384,6 +388,14 @@ describe('emguo.poller', function() {
                     return headers.header1 === 1;
                 }
             ).respond([]);
+            $httpBackend.flush(1);
+
+            $httpBackend.expect('GET', '/admin/123?param1=1&param2=2', undefined,
+                function(headers) {
+                    return headers.header1 === 1;
+                }
+            ).respond([]);
+            $interval.flush(5000);
             $httpBackend.flush(1);
         });
 
@@ -455,6 +467,14 @@ describe('emguo.poller', function() {
                     return headers.header1 === 1;
                 }
             ).respond({});
+            $httpBackend.flush(1);
+
+            $httpBackend.expect('GET', '/admin?param1=1&param2=2', undefined,
+                function(headers) {
+                    return headers.header1 === 1;
+                }
+            ).respond({});
+            $interval.flush(5000);
             $httpBackend.flush(1);
         });
 
