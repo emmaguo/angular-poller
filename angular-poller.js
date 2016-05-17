@@ -5,7 +5,7 @@
  * Angular poller service. It uses a timer and sends requests every few seconds
  * to keep the client synced with the server.
  *
- * @version v0.4.3
+ * @version v0.4.4
  * @link http://github.com/emmaguo/angular-poller
  * @license MIT
  *

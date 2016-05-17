@@ -50,7 +50,7 @@ Add a `<script>` to your `index.html`:
 
 Or use [cdnjs](https://cdnjs.com/libraries/angular-poller) files:
 ```html
-<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.4.3/angular-poller.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.4.4/angular-poller.js"></script>
 ```
 
 ## Quick configuration
