@@ -1,0 +1,9 @@
+test
+.bowerrc
+.editorconfig
+.gitignore
+.jscsrc
+.jshintrc
+.travis.yml
+Gruntfile.js
+karma.conf.js

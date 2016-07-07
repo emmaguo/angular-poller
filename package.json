@@ -1,11 +1,23 @@
 {
     "name": "angular-poller",
-    "description": "Lightweight AngularJS poller service",
-    "license": "MIT",
     "version": "0.4.4",
+    "description": "Lightweight poller service for AngularJS apps",
     "main": "index.js",
+    "author": "Emma Guo <emmahongguo@gmail.com>",
+    "homepage": "https://github.com/emmaguo/angular-poller",
+    "license": "MIT",
+    "scripts": {
+        "test": "grunt"
+    },
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/emmaguo/angular-poller.git"
+    },
     "dependencies": {},
     "devDependencies": {
+        "angular": "^1.5.7",
+        "angular-resource": "^1.5.7",
+        "angular-mocks": "^1.5.7",
         "chai": "^3.5.0",
         "grunt": "^1.0.1",
         "grunt-contrib-jshint": "^1.0.0",
@@ -23,17 +35,9 @@
         "karma-phantomjs-launcher": "^1.0.0",
         "karma-sinon-chai": "^1.2.0",
         "load-grunt-tasks": "^3.5.0",
+        "lodash": "^4.13.1",
         "mocha": "^2.4.5",
-        "phantomjs-prebuilt": "^2.1.7"
-    },
-    "engines": {
-        "node": ">=0.10.0"
-    },
-    "repository": {
-        "type": "git",
-        "url": "http://github.com/emmaguo/angular-poller.git"
-    },
-    "scripts": {
-        "test": "grunt"
+        "phantomjs-prebuilt": "^2.1.7",
+        "restangular": "^1.5.2"
     }
 }
