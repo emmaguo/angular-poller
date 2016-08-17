@@ -30,16 +30,24 @@ Demo: http://emmaguo.github.io/angular-poller/
 
 ## Install
 
-Install via [Bower](http://bower.io/):
+You can install this package either with `npm` or with `bower`.
 
-```shell
-bower install angular-poller
-```
-
-Install via [npm](https://www.npmjs.com/):
+### npm
 
 ```shell
 npm install angular-poller
+```
+
+Then add `emguo.poller` as a dependency for your app:
+
+```javascript
+angular.module('myApp', [require('angular-poller')]);
+```
+
+### bower
+
+```shell
+bower install angular-poller
 ```
 
 Add a `<script>` to your `index.html`:
@@ -48,9 +56,18 @@ Add a `<script>` to your `index.html`:
 <script src="/bower_components/angular-poller/angular-poller.js"></script>
 ```
 
-Or use [cdnjs](https://cdnjs.com/libraries/angular-poller) files:
+Then add `emguo.poller` as a dependency for your app:
+
+```javascript
+angular.module('myApp', ['emguo.poller']);
+```
+
+### cdnjs
+
+You can also use [cdnjs](https://cdnjs.com/libraries/angular-poller) files:
 ```html
 <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.4.4/angular-poller.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.4.4/angular-poller.min.js"></script>
 ```
 
 ## Quick configuration
@@ -386,7 +403,7 @@ https://github.com/emmaguo/angular-poller/releases
 
 ## Supported Angular versions
 
-Angular Poller supports Angular 1.2.0 - 1.4.x.
+Angular Poller supports Angular 1.2.0 - 1.5.x.
 
 ## License
 
