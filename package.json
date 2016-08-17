@@ -1,6 +1,6 @@
 {
     "name": "angular-poller",
-    "version": "0.4.4",
+    "version": "0.4.5",
     "description": "Lightweight poller service for AngularJS apps",
     "main": "index.js",
     "author": "Emma Guo <emmahongguo@gmail.com>",
