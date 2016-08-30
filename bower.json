@@ -1,6 +1,6 @@
 {
     "name": "angular-poller",
-    "main": "angular-poller.min.js",
+    "main": "angular-poller.js",
     "description": "Lightweight poller service for AngularJS apps",
     "homepage": "https://github.com/emmaguo/angular-poller",
     "license": "MIT",
