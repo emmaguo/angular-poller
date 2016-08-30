@@ -5,7 +5,7 @@
  * Angular poller service. It uses a timer and sends requests every few seconds
  * to keep the client synced with the server.
  *
- * @version v0.4.1
+ * @version v0.4.5
  * @link http://github.com/emmaguo/angular-poller
  * @license MIT
  *
@@ -30,7 +30,7 @@
  *      myPoller.promise.then(null, null, callback);
  */
 
-(function(window, angular, undefined) {
+(function(angular, undefined) {
 
     'use strict';
 
@@ -91,7 +91,7 @@
                  * visibility change.
                  */
                 function delayOnVisibilityChange() {
-                    if ($document[0].hidden) {
+                    if ($document.prop('hidden')) {
                         poller.delayAll();
                     } else {
                         poller.resetDelay();
@@ -210,7 +210,7 @@
                 Poller.prototype.start = function() {
                     var target = this.target;
                     var action = this.action;
-                    var argumentsArray = this.argumentsArray.slice(0);
+                    var argumentsArray;
                     var delay = this.delay;
                     var smart = this.smart;
                     var catchError = this.catchError;
@@ -220,25 +220,6 @@
 
                     this.deferred = this.deferred || $q.defer();
 
-                    /**
-                     * $resource: typeof target === 'function'
-                     * Restangular: typeof target === 'object'
-                     * $http: typeof target === 'string'
-                     */
-                    if (typeof target === 'string') {
-
-                        /**
-                         * Update argumentsArray and target for
-                         * target[action].apply(self, argumentsArray).
-                         *
-                         * @example
-                         * $http.get(url, [config])
-                         * $http.post(url, data, [config])
-                         */
-                        argumentsArray.unshift(target);
-                        target = $http;
-                    }
-
                     function tick() {
                         // If smart flag is true, then only send new
                         // request if the previous one is resolved.
@@ -246,9 +227,33 @@
                             angular.isUndefined(current) ||
                             current.$resolved) {
 
+                            if (angular.isFunction(self.argumentsArray)) {
+                                argumentsArray = self.argumentsArray();
+                            } else {
+                                argumentsArray = self.argumentsArray.slice(0);
+                            }
+
+                            /**
+                             * $resource: typeof target === 'function'
+                             * Restangular: typeof target === 'object'
+                             * $http: typeof target === 'string'
+                             */
+                            if (angular.isString(self.target)) {
+
+                                /**
+                                 * Update argumentsArray and target for $http
+                                 *
+                                 * @example
+                                 * $http.get(url, [config])
+                                 * $http.post(url, data, [config])
+                                 */
+                                argumentsArray.unshift(self.target);
+                                target = $http;
+                            }
+
                             timestamp = new Date();
                             current =
-                                target[action].apply(self, argumentsArray);
+                                target[action].apply(target, argumentsArray);
                             current.$resolved = false;
 
                             /**
@@ -375,25 +380,31 @@
                     },
 
                     /**
-                     * Increase all poller interval to idleDelay.
+                     * Increase all poller interval to idleDelay, and restart the ones
+                     * that are already running.
                      */
                     delayAll: function() {
                         angular.forEach(pollers, function(p) {
                             p.delay = p.idleDelay;
-                            p.restart();
+                            if (angular.isDefined(p.interval)) {
+                                p.restart();
+                            }
                         });
                     },
 
                     /**
-                     * Reset all poller interval back to its original delay.
+                     * Reset all poller interval back to its original delay, and restart
+                     * the ones that are already running.
                      */
                     resetDelay: function() {
                         angular.forEach(pollers, function(p) {
                             p.delay = p.normalDelay;
-                            p.restart();
+                            if (angular.isDefined(p.interval)) {
+                                p.restart();
+                            }
                         });
                     }
                 };
             }
         ]);
-})(window, window.angular);
+})(window.angular);

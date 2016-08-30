@@ -1,37 +1,53 @@
 # Angular Poller
 [![Build Status](https://travis-ci.org/emmaguo/angular-poller.svg?branch=master)](https://travis-ci.org/emmaguo/angular-poller)
-[![Coverage Status](https://coveralls.io/repos/emmaguo/angular-poller/badge.svg?branch=master)](https://coveralls.io/r/emmaguo/angular-poller?branch=master)
+[![Coverage Status](https://coveralls.io/repos/emmaguo/angular-poller/badge.svg?branch=master&service=github)](https://coveralls.io/github/emmaguo/angular-poller?branch=master)
 [![devDependency Status](https://david-dm.org/emmaguo/angular-poller/dev-status.svg)](https://david-dm.org/emmaguo/angular-poller#info=devDependencies)
-[![Bower version](https://badge.fury.io/bo/angular-poller.svg)](https://badge.fury.io/bo/angular-poller)
+[![npm version](https://badge.fury.io/js/angular-poller.svg)](https://badge.fury.io/js/angular-poller)
 
 Lightweight [AngularJS](http://angularjs.org/) poller service which can be easily injected into controllers. It uses a timer and sends requests every few seconds to keep the client synced with the server. Angular Poller supports `$resource`, `$http` and `Restangular`.
 
-Demo site: http://emmaguo.github.io/angular-poller/
+Demo: http://emmaguo.github.io/angular-poller/
 
 ## Table of contents
 - [Install](#install)
 - [Quick configuration](#quick-configuration)
 - [Advanced usage](#advanced-usage)
-	- [Customize $resource poller](#customize-resource-poller)
+    - [Customize $resource poller](#customize-resource-poller)
     - [Customize $http poller](#customize-http-poller)
     - [Customize Restangular poller](#customize-restangular-poller)
-	- [Error handling](#error-handling)
-	- [Multiple pollers](#multiple-pollers)
-	- [Multiple controllers](#multiple-controllers)
-	- [Only send new request if the previous one is resolved](#only-send-new-request-if-the-previous-one-is-resolved)
-	- [Always create new poller on calling poller.get](#always-create-new-poller-on-calling-pollerget)
+    - [Update argumentsArray while poller is running](#update-argumentsarray-while-poller-is-running)
+    - [Error handling](#error-handling)
+    - [Multiple pollers](#multiple-pollers)
+    - [Multiple controllers](#multiple-controllers)
+    - [Only send new request if the previous one is resolved](#only-send-new-request-if-the-previous-one-is-resolved)
+    - [Always create new poller on calling poller.get](#always-create-new-poller-on-calling-pollerget)
     - [Automatically stop all pollers when navigating between views](#automatically-stop-all-pollers-when-navigating-between-views)
     - [Automatically reset all pollers when navigating between views](#automatically-reset-all-pollers-when-navigating-between-views)
     - [Automatically adjust poller speed on page visibility change](#automatically-adjust-poller-speed-on-page-visibility-change)
+- [Changelog](#changelog)
 - [Supported Angular versions](#supported-angular-versions)
 - [License](#license)
 
 ## Install
 
-Install with [bower](https://github.com/bower/bower):
+You can install this package either with `npm` or with `bower`.
+
+### npm
 
 ```shell
-bower install angular-poller --save
+npm install angular-poller
+```
+
+Then add `emguo.poller` as a dependency for your app:
+
+```javascript
+angular.module('myApp', [require('angular-poller')]);
+```
+
+### bower
+
+```shell
+bower install angular-poller
 ```
 
 Add a `<script>` to your `index.html`:
@@ -40,16 +56,22 @@ Add a `<script>` to your `index.html`:
 <script src="/bower_components/angular-poller/angular-poller.js"></script>
 ```
 
-Or use [cdnjs](https://cdnjs.com/libraries/angular-poller) files:
+Then add `emguo.poller` as a dependency for your app:
+
+```javascript
+angular.module('myApp', ['emguo.poller']);
+```
+
+### cdnjs
+
+You can also use [cdnjs](https://cdnjs.com/libraries/angular-poller) files:
 ```html
-<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.4.1/angular-poller.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.4.5/angular-poller.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-poller/0.4.5/angular-poller.min.js"></script>
 ```
 
 ## Quick configuration
 ```javascript
-// Inject angular poller service.
-var myModule = angular.module('myApp', ['emguo.poller']);
-
 myModule.controller('myController', function($scope, $resource, poller) {
 
     // Define your resource object.
@@ -78,9 +100,6 @@ myModule.controller('myController', function($scope, $resource, poller) {
 
 ### Customize $resource poller
 ```javascript
-// Inject angular poller service.
-var myModule = angular.module('myApp', ['emguo.poller']);
-
 myModule.controller('myController', function($scope, $resource, poller) {
 
     // Define your resource object.
@@ -167,6 +186,28 @@ myModule.controller('myController', function($scope, Restangular, poller) {
 ```
 Angular Poller supports all [Restangular action methods](https://github.com/mgonto/restangular#methods-description). Here `argumentsArray` is exactly the same as the input arguments for the original method function. For instance the `argumentsArray` for element method `getList(subElement, [queryParams, headers])` would be `subElement, [queryParams, headers]`, and the `argumentsArray` for collection method `getList([queryParams, headers])` would be `[queryParams, headers]`, etc.
 
+### Update argumentsArray while poller is running
+To update `argumentsArray` without restarting poller, you can pass in `argumentsArray` as a function, which gets evaluated on every tick.
+```javascript
+var myPoller = poller.get(myResource, {
+    action: 'get',
+    delay: 6000,
+    argumentsArray: function() {
+        return [
+            {
+                param1: $scope.param1,
+                param2: $scope.param2
+            },
+            {
+                header1: 1
+            }
+        ]
+    }
+});
+
+myPoller.promise.then(null, null, callback);
+```
+
 ### Error handling
 One way to capture error responses is to use the `catchError` option. It indicates whether poller should get notified of error responses.
 ```javascript
@@ -194,29 +235,25 @@ myPoller.promise.then(null, null, function(result) {
 
 Alternatively you can use AngularJS `interceptors` for global error handling like so:
 ```javascript
-angular.module('myApp', ['emguo.poller'])
-    .config(function($httpProvider) {
-        $httpProvider.interceptors.push(function($q, poller) {
-            return {
-                'responseError': function(rejection) {
-                    if (rejection.status === 503) {
-                        // Stop poller or provide visual feedback to the user etc
-                        poller.stopAll();
-                    }
-                    return $q.reject(rejection);
+myModule.config(function($httpProvider) {
+    $httpProvider.interceptors.push(function($q, poller) {
+        return {
+            'responseError': function(rejection) {
+                if (rejection.status === 503) {
+                    // Stop poller or provide visual feedback to the user etc
+                    poller.stopAll();
                 }
-            };
-        });
+                return $q.reject(rejection);
+            }
+        };
     });
+});
 ```
 
 You may also use `setErrorInterceptor` if you are using Restangular.
 
 ### Multiple pollers
 ```javascript
-// Inject angular poller service.
-var myModule = angular.module('myApp', ['emguo.poller']);
-
 myModule.controller('myController', function($scope, poller) {
 
     var poller1 = poller.get(target1),
@@ -241,9 +278,6 @@ myModule.controller('myController', function($scope, poller) {
 
 ### Multiple controllers
 ```javascript
-// Inject angular poller service.
-var myModule = angular.module('myApp', ['emguo.poller']);
-
 myModule.factory('myTarget', function() {
     // return $resource object, Restangular object or $http url.
     return ...;
@@ -285,8 +319,6 @@ var myPoller = poller.get(myTarget, {
 You can also use `pollerConfig` to set `smart` globally for all pollers.
 
 ```javascript
-var myModule = angular.module('myApp', ['emguo.poller']);
-
 myModule.config(function(pollerConfig) {
     pollerConfig.smart = true;
 });
@@ -301,8 +333,6 @@ But if you do want to have more than one poller running against the same target,
 poller on calling `poller.get` like so:
 
 ```javascript
-var myModule = angular.module('myApp', ['emguo.poller']);
-
 myModule.config(function(pollerConfig) {
     pollerConfig.neverOverwrite = true;
 });
@@ -311,8 +341,6 @@ myModule.config(function(pollerConfig) {
 ### Automatically stop all pollers when navigating between views
 In order to automatically stop all pollers when navigating between views with multiple controllers, you can use `pollerConfig`.
 ```javascript
-var myModule = angular.module('myApp', ['emguo.poller']);
-
 myModule.config(function(pollerConfig) {
     pollerConfig.stopOn = '$stateChangeStart'; // If you use ui-router.
     pollerConfig.stopOn = '$routeChangeStart'; // If you use ngRoute.
@@ -324,8 +352,6 @@ You also have the option to set `pollerConfig.stopOn` to `$stateChangeSuccess` o
 You can also use `pollerConfig` to automatically reset all pollers when navigating between views with multiple controllers.
 It empties poller registry in addition to stopping all pollers. It means `poller.get` will always create a new poller.
 ```javascript
-var myModule = angular.module('myApp', ['emguo.poller']);
-
 myModule.config(function(pollerConfig) {
     pollerConfig.resetOn = '$stateChangeStart'; // If you use ui-router.
     pollerConfig.resetOn = '$routeChangeStart'; // If you use ngRoute.
@@ -337,8 +363,6 @@ You also have the option to set `pollerConfig.resetOn` to `$stateChangeSuccess` 
 Use the `handleVisibilityChange` option to automatically slow down poller delay to `idleDelay` when page is hidden.
 By default `idleDelay` is set to 10 seconds.
 ```javascript
-var myModule = angular.module('myApp', ['emguo.poller']);
-
 myModule.config(function(pollerConfig) {
     pollerConfig.handleVisibilityChange = true;
 });
@@ -350,15 +374,19 @@ myModule.controller('myController', function(poller) {
 });
 ```
 
+## Changelog
+
+https://github.com/emmaguo/angular-poller/releases
+
 ## Supported Angular versions
 
-Angular Poller supports Angular 1.2.0 - 1.4.x.
+Angular Poller supports Angular 1.2.0 - 1.5.x.
 
 ## License
 
 The MIT License (MIT)
 
-Copyright (c) 2013-2015 Emma Guo
+Copyright (c) 2013-2016 Emma Guo
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
